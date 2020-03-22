@@ -85,6 +85,17 @@ def get_base_inline_keyboard():
     ]
     return InlineKeyboardMarkup(keyboard)
 
+def build_menu(buttons,
+               n_cols,
+               header_buttons=None,
+               footer_buttons=None):
+    menu = [buttons[i:i + n_cols] for i in range(0, len(buttons), n_cols)]
+    if header_buttons:
+        menu.insert(0, [header_buttons])
+    if footer_buttons:
+        menu.append([footer_buttons])
+    return menu
+
 def get_keyboard2(call_data):
     if call_data == "vegetables":
         keyboard = []
@@ -92,31 +103,31 @@ def get_keyboard2(call_data):
         ith = 0
         for i in whole_menu:
             ith = ith + 1
-            keyboard.append(InlineKeyboardButton(i, callback_data = ith))
+            keyboard.append(InlineKeyboardButton(i, callback_data = str(ith)))
     elif call_data == "fruits":
         keyboard = []
         whole_menu = menu.fruits
         ith = 0
         for i in whole_menu:
             ith = ith + 1
-            keyboard.append(InlineKeyboardButton(i, callback_data = ith))
+            keyboard.append(InlineKeyboardButton(i, callback_data = str(ith)))
     elif call_data == "meals":
         keyboard = []
         whole_menu = menu.meals
         ith = 0
         for i in whole_menu:
             ith = ith + 1
-            keyboard.append(InlineKeyboardButton(i, callback_data = ith))
+            keyboard.append(InlineKeyboardButton(i, callback_data = str(ith)))
     elif call_data == "derinks":
         keyboard = []
         whole_menu = menu.derinks
         ith = 0
         for i in whole_menu:
             ith = ith + 1
-            keyboard.append(InlineKeyboardButton(i, callback_data = ith))
-    
+            keyboard.append(InlineKeyboardButton(i, callback_data = str(ith)))
     keyboard.append(InlineKeyboardButton("Назад", callback_data = "back"))
-    return keyboard   
+
+    return InlineKeyboardMarkup(build_menu(keyboard, n_cols = 1))
 
 def show_menu(update, context):
     user_id = update.effective_user.id
@@ -137,8 +148,8 @@ def check_show_menu(update, context):
     ]
     if data == "vegetables":
         query.edit_message_text(
-            text = "Hi",
-            reply_markup = InlineKeyboardMarkup(get_keyboard2("vegetables"))
+            text = current_text,
+            reply_markup = get_keyboard2("vegetables")
         )
     elif data == "fruits":
         query.edit_message_text(
@@ -160,7 +171,7 @@ def check_show_menu(update, context):
             text = current_text,
             reply_markup = get_base_inline_keyboard()
         )
-    return ConversationHandler.END
+    return bot_states.CHECK_MENU
 
 def start(update, context):
     context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.start_command_response, reply_markup = reply_markup)
