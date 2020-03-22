@@ -4,10 +4,11 @@ import time
 import os
 
 from datetime import datetime
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, InlineQueryHandler, ConversationHandler, CallbackQueryHandler , CallbackContext
-from telegram import Update, InlineQueryResultArticle, InputTextMessageContent, ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, InlineQueryHandler, ConversationHandler, CallbackQueryHandler
+from telegram import InlineQueryResultArticle, InputTextMessageContent, ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup
 from config import bot_messages, bot_states, menu
 from functools import wraps
+
 
 # DB_Host = os.environ['DB_Host']
 # DB_Database = os.environ['DB_Database']
@@ -32,6 +33,12 @@ def log_text(debug_text):
 def send_message(context, chat_id, text):
     try:
         context.bot.send_message(chat_id = chat_id, text = text, parse_mode = "Markdown", reply_markup = reply_markup)
+    except:
+        log_text('No such chat_id using a bot')
+
+def send_message_keyboard(context, chat_id, text, kbrd):
+    try:
+        context.bot.send_message(chat_id = chat_id, text = text, parse_mode = "Markdown", reply_markup = kbrd)
     except:
         log_text('No such chat_id using a bot')
 
@@ -63,123 +70,92 @@ def read_feedback(update, context):
     context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.feedback_success_command_response, reply_markup = reply_markup)
     return ConversationHandler.END
 
-def show_menu(update, context):
-    user_id = update.message.from_user.id
-    context.bot.send_message(chat_id = user_id, text = "Hi", parse_mode = "Markdown", reply_markup = get_base_inline_keyboard())
-    return bot_states.CHECK_MENU
-
 def get_base_inline_keyboard():
-    """ Получить клавиатуру для сообщения
-        Эта клавиатура будет видна под каждым сообщением, где её прикрепили
-    """
     keyboard = [
         # Каждый элемент внутри списка -- это один вертикальный столбец.
         # Сколько кнопок -- столько столбцов
         [
-            InlineKeyboardButton('овощи', callback_data = 'vegetables'),
-            InlineKeyboardButton('фрукты', callback_data = 'fruits'),
+            InlineKeyboardButton('Овощи', callback_data = 'vegetables'),
+            InlineKeyboardButton('Фрукты', callback_data = 'fruits'),
         ],
         [
-            InlineKeyboardButton('продукты', callback_data = 'meals'),
-            InlineKeyboardButton('напитки', callback_data = 'derinks'),
+            InlineKeyboardButton('Продукты', callback_data = 'meals'),
+            InlineKeyboardButton('Напитки', callback_data = 'derinks'),
         ]
     ]
     return InlineKeyboardMarkup(keyboard)
-    '''user_id = update.message.from_user.id
-    whole_menu = bot_messages.menu_initial
-    it = 1
-    for i in list:
-        new_list = str(it) + ". " + str(i)
-        whole_menu = whole_menu + new_list + "\n"
-        it = it + 1
-    send_message(context, user_id, whole_menu)'''
-    
+
 def get_keyboard2(call_data):
-    """ Получить вторую страницу клавиатуры для сообщений
-        Возможно получить только при нажатии кнопки на первой клавиатуре
-    """
     if call_data == "vegetables":
         keyboard = []
         whole_menu = menu.vegetables
         ith = 0
         for i in whole_menu:
-            ith += 1
+            ith = ith + 1
             keyboard.append(InlineKeyboardButton(i[0], callback_data = 'v' + str(ith)))
-    
     elif call_data == "fruits":
         keyboard = []
         whole_menu = menu.fruits
         ith = 0
         for i in whole_menu:
-            ith += 1
+            ith = ith + 1
             keyboard.append(InlineKeyboardButton(i[0], callback_data = 'f' + str(ith)))
-        
     elif call_data == "meals":
         keyboard = []
         whole_menu = menu.meals
         ith = 0
         for i in whole_menu:
-            ith += 1
+            ith = ith + 1
             keyboard.append(InlineKeyboardButton(i[0], callback_data = 'm' + str(ith)))
-
     elif call_data == "derinks":
         keyboard = []
         whole_menu = menu.derinks
         ith = 0
         for i in whole_menu:
-            ith += 1
+            ith = ith + 1
             keyboard.append(InlineKeyboardButton(i[0], callback_data = 'd' + str(ith)))
     
-    keyboard.append(InlineKeyboardButton("назад", callback_data = 'back'))
+    keyboard.append(InlineKeyboardButton("Назад", callback_data = 'back'))
     return InlineKeyboardMarkup(keyboard)    
 
-def keyboard_callback_handler(update: Update, context: CallbackContext):
-    """ Обработчик ВСЕХ кнопок со ВСЕХ клавиатур
-    """
+def show_menu(update, context):
+    user_id = update.effective_user.id
+    reply_keyboard = get_base_inline_keyboard()
+    send_message_keyboard(context, user_id, bot_messages.show_menu_text, reply_keyboard)
+    return bot_states.CHECK_MENU
+
+def check_show_menu(update, context):
     query = update.callback_query
     data = query.data
-    # Обратите внимание: используется `effective_message`
-    chat_id = update.effective_message.chat_id
     current_text = update.effective_message.text
-    
+
     if data == "vegetables":
-        # Показать следующий экран клавиатуры
-        # (оставить тот же текст, но указать другой массив кнопок)
         query.edit_message_text(
-            text=current_text,
+            text = current_text,
             reply_markup = get_keyboard2("vegetables"),
         )
     elif data == "fruits":
-        # Показать следующий экран клавиатуры
-        # (оставить тот же текст, но указать другой массив кнопок)
         query.edit_message_text(
-            text=current_text,
-            reply_markup=get_keyboard2("fruits"),
+            text = current_text,
+            reply_markup = get_keyboard2("fruits"),
         )      
-        
     elif data == "meals":
-        # Показать следующий экран клавиатуры
-        # (оставить тот же текст, но указать другой массив кнопок)
         query.edit_message_text(
-            text=current_text,
+            text = current_text,
             reply_markup=get_keyboard2("meals"),
         )            
- 
-    elif data == "derinks":
-        # Показать следующий экран клавиатуры
-        # (оставить тот же текст, но указать другой массив кнопок)
+    elif data == 'derinks':
         query.edit_message_text(
-            text=current_text,
-            reply_markup=get_keyboard2("derinks"),
+            text = current_text,
+            reply_markup = get_keyboard2("derinks"),
         )          
     elif data == "back" :
-        # Показать предыдущий экран клавиатуры
-        # (оставить тот же текст, но указать другой массив кнопок)
         query.edit_message_text(
-            text=current_text,
-            reply_markup=get_base_inline_keyboard(),
-        )    
-    
+            text = current_text,
+            reply_markup = get_base_inline_keyboard(),
+        )
+    return bot_states.CHECK_MENU
+
 def start(update, context):
     context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.start_command_response, reply_markup = reply_markup)
 
@@ -189,23 +165,32 @@ def help(update, context):
 def unknown(update, context):
     context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.unknown_command_response, reply_markup = reply_markup)
 
+def cancel(update, context):
+    context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.cancelled_successfully, reply_markup = reply_markup)
+    return ConversationHandler.END
+
 def main():
     updater = Updater(token = "1130609306:AAFFWpVoazrjy0DYd4TrvEd2cLbfwE4_3EE", use_context = True)
     dp = updater.dispatcher
     feedback_handler = CommandHandler('feedback', feedback, pass_args = True, pass_chat_data = True)
-    show_menu_handler = CommandHandler('show_menu', show_menu)
     start_handler = CommandHandler('start', start)
     help_handler = CommandHandler('help', help)
-    buttons_handler = CallbackQueryHandler(callback=keyboard_callback_handler)
     unknown_handler = MessageHandler(Filters.command, unknown)
-    
-    dp.add_handler(show_menu_handler)
+    show_menu_conv_handler = ConversationHandler(
+        entry_points = [CommandHandler('show_menu', show_menu)],
+        states = {
+            bot_states.CHECK_MENU: [CallbackQueryHandler(check_show_menu)]
+        },
+        fallbacks = [CommandHandler('cancel', cancel)]
+    )
+
+    dp.add_handler(show_menu_conv_handler)
     dp.add_handler(feedback_handler)
     dp.add_handler(start_handler)
     dp.add_handler(help_handler)
-    dp.add_handler(buttons_handler)
     dp.add_handler(unknown_handler)
     updater.start_polling()
     updater.idle()
+
 if __name__ == '__main__':
     main()
