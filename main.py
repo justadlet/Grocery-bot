@@ -103,28 +103,28 @@ def get_keyboard2(call_data):
         ith = 0
         for i in whole_menu:
             ith = ith + 1
-            keyboard.append(InlineKeyboardButton(i, callback_data = str(ith)))
+            keyboard.append(InlineKeyboardButton(i, callback_data = "v" + str(ith)))
     elif call_data == "fruits":
         keyboard = []
         whole_menu = menu.fruits
         ith = 0
         for i in whole_menu:
             ith = ith + 1
-            keyboard.append(InlineKeyboardButton(i, callback_data = str(ith)))
+            keyboard.append(InlineKeyboardButton(i, callback_data = "f" + str(ith)))
     elif call_data == "meals":
         keyboard = []
         whole_menu = menu.meals
         ith = 0
         for i in whole_menu:
             ith = ith + 1
-            keyboard.append(InlineKeyboardButton(i, callback_data = str(ith)))
+            keyboard.append(InlineKeyboardButton(i, callback_data = "m" + str(ith)))
     elif call_data == "derinks":
         keyboard = []
         whole_menu = menu.derinks
         ith = 0
         for i in whole_menu:
             ith = ith + 1
-            keyboard.append(InlineKeyboardButton(i, callback_data = str(ith)))
+            keyboard.append(InlineKeyboardButton(i, callback_data = "d" + str(ith)))
     keyboard.append(InlineKeyboardButton("Назад", callback_data = "back"))
 
     return InlineKeyboardMarkup(build_menu(keyboard, n_cols = 1))
@@ -136,16 +136,9 @@ def show_menu(update, context):
     return bot_states.CHECK_MENU
 
 def check_show_menu(update, context):
-    user_id = update.effective_user.id
     query = update.callback_query
     data = query.data
     current_text = update.effective_message.text
-    kbrd = [
-        [
-            InlineKeyboardButton('Mesh', callback_data = 'vegetables'),
-            InlineKeyboardButton('mesh', callback_data = 'fruits'),
-        ]
-    ]
     if data == "vegetables":
         query.edit_message_text(
             text = current_text,

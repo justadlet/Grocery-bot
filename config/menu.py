@@ -1,19 +1,18 @@
 vegetables = ['Лук',
              'Картошка',
-             'Рис',
-             'Сахар']
+             'Islam']
 
-fruits = ['Картошка',
-         'Рис',
-         'Сахар']
+fruits = ['dates',
+         'banana',
+         'apple']
 
-meals = ['Картошка',
-         'Рис',
-         'Сахар']
+meals = ['meal1',
+         'meal2',
+         'meal3']
 
-derinks = ['Картошка',
-         'Рис',
-         'Сахар']
+derinks = ['Esbol meshok',
+         'govnokoder',
+         'de']
 
 
 
