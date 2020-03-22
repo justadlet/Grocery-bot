@@ -5,7 +5,7 @@ import os
 
 from datetime import datetime
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, InlineQueryHandler, ConversationHandler, CallbackQueryHandler , CallbackContext
-from telegram import InlineQueryResultArticle, InputTextMessageContent, ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram import Update, InlineQueryResultArticle, InputTextMessageContent, ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup
 from config import bot_messages, bot_states, menu
 from functools import wraps
 
@@ -63,27 +63,28 @@ def read_feedback(update, context):
     context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.feedback_success_command_response, reply_markup = reply_markup)
     return ConversationHandler.END
 
+def show_menu(update, context):
+    user_id = update.message.from_user.id
+    context.bot.send_message(chat_id = user_id, text = "Hi", parse_mode = "Markdown", reply_markup = get_base_inline_keyboard())
+    return bot_states.CHECK_MENU
+
 def get_base_inline_keyboard():
     """ Получить клавиатуру для сообщения
         Эта клавиатура будет видна под каждым сообщением, где её прикрепили
     """
-    
     keyboard = [
         # Каждый элемент внутри списка -- это один вертикальный столбец.
         # Сколько кнопок -- столько столбцов
         [
-            InlineKeyboardButton('овощи', callback_data= 'vegetables'),
-            InlineKeyboardButton('фрукты', callback_data= 'fruits'),
+            InlineKeyboardButton('овощи', callback_data = 'vegetables'),
+            InlineKeyboardButton('фрукты', callback_data = 'fruits'),
         ],
         [
-            InlineKeyboardButton('продукты', callback_data='meals'),
-            InlineKeyboardButton('напитки', callback_data='derinks'),
+            InlineKeyboardButton('продукты', callback_data = 'meals'),
+            InlineKeyboardButton('напитки', callback_data = 'derinks'),
         ]
-       
     ]
     return InlineKeyboardMarkup(keyboard)
-
-    
     '''user_id = update.message.from_user.id
     whole_menu = bot_messages.menu_initial
     it = 1
@@ -93,50 +94,39 @@ def get_base_inline_keyboard():
         it = it + 1
     send_message(context, user_id, whole_menu)'''
     
- 
-
 def get_keyboard2(call_data):
     """ Получить вторую страницу клавиатуры для сообщений
         Возможно получить только при нажатии кнопки на первой клавиатуре
     """
-   if call_data == "vegetables":
+    if call_data == "vegetables":
         keyboard = []
-        menu = menu.vegetables
-        
-        
+        whole_menu = menu.vegetables
         ith = 0
-        for i in menu:
+        for i in whole_menu:
             ith += 1
             keyboard.append(InlineKeyboardButton(i[0], callback_data = 'v' + str(ith)))
     
     elif call_data == "fruits":
         keyboard = []
-        menu = menu.fruits
-        
-        
+        whole_menu = menu.fruits
         ith = 0
-        for i in menu:
+        for i in whole_menu:
             ith += 1
             keyboard.append(InlineKeyboardButton(i[0], callback_data = 'f' + str(ith)))
         
-        
     elif call_data == "meals":
         keyboard = []
-        menu = menu.meals
-        
-        
+        whole_menu = menu.meals
         ith = 0
-        for i in menu:
+        for i in whole_menu:
             ith += 1
             keyboard.append(InlineKeyboardButton(i[0], callback_data = 'm' + str(ith)))
 
     elif call_data == "derinks":
         keyboard = []
-        menu = menu.derinks
-        
-        
+        whole_menu = menu.derinks
         ith = 0
-        for i in menu:
+        for i in whole_menu:
             ith += 1
             keyboard.append(InlineKeyboardButton(i[0], callback_data = 'd' + str(ith)))
     
@@ -148,43 +138,41 @@ def keyboard_callback_handler(update: Update, context: CallbackContext):
     """
     query = update.callback_query
     data = query.data
-    
-
     # Обратите внимание: используется `effective_message`
     chat_id = update.effective_message.chat_id
     current_text = update.effective_message.text
     
-    if data == 'vegetables':
+    if data == "vegetables":
         # Показать следующий экран клавиатуры
         # (оставить тот же текст, но указать другой массив кнопок)
         query.edit_message_text(
             text=current_text,
-            reply_markup=get_keyboard2('vegetables'),
+            reply_markup = get_keyboard2("vegetables"),
         )
-    elif data == 'fruits':
+    elif data == "fruits":
         # Показать следующий экран клавиатуры
         # (оставить тот же текст, но указать другой массив кнопок)
         query.edit_message_text(
             text=current_text,
-            reply_markup=get_keyboard2('fruits'),
+            reply_markup=get_keyboard2("fruits"),
         )      
         
-    elif data == 'meals':
+    elif data == "meals":
         # Показать следующий экран клавиатуры
         # (оставить тот же текст, но указать другой массив кнопок)
         query.edit_message_text(
             text=current_text,
-            reply_markup=get_keyboard2('meals'),
+            reply_markup=get_keyboard2("meals"),
         )            
  
-    elif data == 'derinks':
+    elif data == "derinks":
         # Показать следующий экран клавиатуры
         # (оставить тот же текст, но указать другой массив кнопок)
         query.edit_message_text(
             text=current_text,
-            reply_markup=get_keyboard2('derinks'),
+            reply_markup=get_keyboard2("derinks"),
         )          
-    elif data == 'back' :
+    elif data == "back" :
         # Показать предыдущий экран клавиатуры
         # (оставить тот же текст, но указать другой массив кнопок)
         query.edit_message_text(
@@ -192,14 +180,6 @@ def keyboard_callback_handler(update: Update, context: CallbackContext):
             reply_markup=get_base_inline_keyboard(),
         )    
     
-    
-    
-    
-    
-
-
-    
-
 def start(update, context):
     context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.start_command_response, reply_markup = reply_markup)
 
@@ -216,14 +196,15 @@ def main():
     show_menu_handler = CommandHandler('show_menu', show_menu)
     start_handler = CommandHandler('start', start)
     help_handler = CommandHandler('help', help)
+    buttons_handler = CallbackQueryHandler(callback=keyboard_callback_handler)
     unknown_handler = MessageHandler(Filters.command, unknown)
-
+    
     dp.add_handler(show_menu_handler)
     dp.add_handler(feedback_handler)
     dp.add_handler(start_handler)
     dp.add_handler(help_handler)
+    dp.add_handler(buttons_handler)
     dp.add_handler(unknown_handler)
-
     updater.start_polling()
     updater.idle()
 if __name__ == '__main__':
