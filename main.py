@@ -89,32 +89,31 @@ def get_keyboard2(call_data):
     if call_data == "vegetables":
         keyboard = []
         whole_menu = menu.vegetables
-        print(whole_menu)
         ith = 0
         for i in whole_menu:
             ith = ith + 1
-            keyboard.append(InlineKeyboardButton(i, callback_data = 'v' + str(ith)))
+            keyboard.append(InlineKeyboardButton(i, callback_data = ith))
     elif call_data == "fruits":
         keyboard = []
         whole_menu = menu.fruits
         ith = 0
         for i in whole_menu:
             ith = ith + 1
-            keyboard.append(InlineKeyboardButton(i, callback_data = 'f' + str(ith)))
+            keyboard.append(InlineKeyboardButton(i, callback_data = ith))
     elif call_data == "meals":
         keyboard = []
         whole_menu = menu.meals
         ith = 0
         for i in whole_menu:
             ith = ith + 1
-            keyboard.append(InlineKeyboardButton(i, callback_data = 'm' + str(ith)))
+            keyboard.append(InlineKeyboardButton(i, callback_data = ith))
     elif call_data == "derinks":
         keyboard = []
         whole_menu = menu.derinks
         ith = 0
         for i in whole_menu:
             ith = ith + 1
-            keyboard.append(InlineKeyboardButton(i, callback_data = 'd' + str(ith)))
+            keyboard.append(InlineKeyboardButton(i, callback_data = ith))
     
     keyboard.append(InlineKeyboardButton("Назад", callback_data = "back"))
     return keyboard   
