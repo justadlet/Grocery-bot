@@ -4,7 +4,7 @@ import time
 import os
 
 from datetime import datetime
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, InlineQueryHandler, ConversationHandler, CallbackQueryHandler
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, InlineQueryHandler, ConversationHandler, CallbackQueryHandler, CallbackContext
 from telegram import InlineQueryResultArticle, InputTextMessageContent, ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup
 from config import bot_messages, bot_states, menu
 from functools import wraps
@@ -89,34 +89,35 @@ def get_keyboard2(call_data):
     if call_data == "vegetables":
         keyboard = []
         whole_menu = menu.vegetables
+        print(whole_menu)
         ith = 0
         for i in whole_menu:
             ith = ith + 1
-            keyboard.append(InlineKeyboardButton(i[0], callback_data = 'v' + str(ith)))
+            keyboard.append(InlineKeyboardButton(i, callback_data = 'v' + str(ith)))
     elif call_data == "fruits":
         keyboard = []
         whole_menu = menu.fruits
         ith = 0
         for i in whole_menu:
             ith = ith + 1
-            keyboard.append(InlineKeyboardButton(i[0], callback_data = 'f' + str(ith)))
+            keyboard.append(InlineKeyboardButton(i, callback_data = 'f' + str(ith)))
     elif call_data == "meals":
         keyboard = []
         whole_menu = menu.meals
         ith = 0
         for i in whole_menu:
             ith = ith + 1
-            keyboard.append(InlineKeyboardButton(i[0], callback_data = 'm' + str(ith)))
+            keyboard.append(InlineKeyboardButton(i, callback_data = 'm' + str(ith)))
     elif call_data == "derinks":
         keyboard = []
         whole_menu = menu.derinks
         ith = 0
         for i in whole_menu:
             ith = ith + 1
-            keyboard.append(InlineKeyboardButton(i[0], callback_data = 'd' + str(ith)))
+            keyboard.append(InlineKeyboardButton(i, callback_data = 'd' + str(ith)))
     
-    keyboard.append(InlineKeyboardButton("Назад", callback_data = 'back'))
-    return InlineKeyboardMarkup(keyboard)    
+    keyboard.append(InlineKeyboardButton("Назад", callback_data = "back"))
+    return keyboard   
 
 def show_menu(update, context):
     user_id = update.effective_user.id
@@ -125,36 +126,42 @@ def show_menu(update, context):
     return bot_states.CHECK_MENU
 
 def check_show_menu(update, context):
+    user_id = update.effective_user.id
     query = update.callback_query
     data = query.data
     current_text = update.effective_message.text
-
+    kbrd = [
+        [
+            InlineKeyboardButton('Mesh', callback_data = 'vegetables'),
+            InlineKeyboardButton('mesh', callback_data = 'fruits'),
+        ]
+    ]
     if data == "vegetables":
         query.edit_message_text(
-            text = current_text,
-            reply_markup = get_keyboard2("vegetables"),
+            text = "Hi",
+            reply_markup = InlineKeyboardMarkup(get_keyboard2("vegetables"))
         )
     elif data == "fruits":
         query.edit_message_text(
             text = current_text,
-            reply_markup = get_keyboard2("fruits"),
+            reply_markup = get_keyboard2("fruits")
         )      
     elif data == "meals":
         query.edit_message_text(
             text = current_text,
-            reply_markup=get_keyboard2("meals"),
+            reply_markup=get_keyboard2("meals")
         )            
     elif data == 'derinks':
         query.edit_message_text(
             text = current_text,
-            reply_markup = get_keyboard2("derinks"),
+            reply_markup = get_keyboard2("derinks")
         )          
     elif data == "back" :
         query.edit_message_text(
             text = current_text,
-            reply_markup = get_base_inline_keyboard(),
+            reply_markup = get_base_inline_keyboard()
         )
-    return bot_states.CHECK_MENU
+    return ConversationHandler.END
 
 def start(update, context):
     context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.start_command_response, reply_markup = reply_markup)
