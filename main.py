@@ -342,7 +342,8 @@ def main():
         entry_points = [CommandHandler('show_menu', show_menu)],
         states = {
             bot_states.CHECK_MENU: [CallbackQueryHandler(check_show_menu)],
-            bot_states.CHECK_PRODUCT_AMOUNT: [MessageHandler(Filters.text, check_product_amount)]
+            bot_states.CHECK_PRODUCT_AMOUNT: [MessageHandler(Filters.text, check_product_amount)],
+            bot_states.READ_USER_INFO: [MessageHandler(Filters.text, read_user_info)]
         },
         fallbacks = [CommandHandler('cancel', cancel)]
     )
