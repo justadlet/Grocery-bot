@@ -21,11 +21,10 @@ logging.basicConfig(format = '%(asctime)s - %(name)s - %(levelname)s - %(message
                      
 logger = logging.getLogger(__name__)
 LIST_OF_ADMINS = [251961384]
-custom_keyboard = [['/add', '/delete'],
-                   ['/set', '/stop'],
-                   ['/clear', '/showtasks'],
-                   ['/feedback', '/help'],
-                   ['/admin_help']]
+custom_keyboard = [['/show_menu', '/show_products'],
+                   ['/start', '/cancel'],
+                   ['/help', '/clear'],
+                   ['/feedback']]
 reply_markup = telegram.ReplyKeyboardMarkup(custom_keyboard, resize_keyboard = True)
 connection = psycopg2.connect(database = DB_Database, user = DB_User, password = DB_Password, host = DB_Host, port = DB_Port)
 
@@ -143,7 +142,6 @@ def get_keyboard2(call_data):
         ith = 0
         for i in whole_menu:
             ith = ith + 1
-            print(i)
             keyboard.append(InlineKeyboardButton(str(i[0]) + " - " + str(i[1]) + str(i[2]), callback_data = "v" + str(ith)))
     elif call_data == "fruits":
         keyboard = []
@@ -182,7 +180,6 @@ def check_clear(update, context):
     query = update.callback_query
     user_id = update.effective_user.id
     user_tasks = sql_number_of_products(user_id)
-    print(query.data)
     if query.data == '1':
         if user_tasks > 0:
             sql_clear(user_id)
@@ -268,7 +265,7 @@ def show_user_products(update, context):
         reply_text = bot_messages.show_products_command_response + get_product_list(user_id)
         send_message(context, user_id, reply_text)
     else:
-        reply_text = bot_messages.products_empty_response
+        reply_text = "Извините, но ваша корзина пуста!\nИспользуйте /show_menu чтобы набрать продукты в корзину"
         send_message(context, user_id, reply_text)
 
 # def show_tasks(update, context):
