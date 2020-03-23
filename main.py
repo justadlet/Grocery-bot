@@ -257,19 +257,23 @@ def get_product_list(user_id):
         decrypted_product = ""
         encrypted = i[0]
         if i[0][0] == 'v':
-            x = int(encrypted[1:])
+            x = int(encrypted[1:]) - 1
+            print(x)
             decrypted_product = menu.vegetables[x][0]
             whole_price += int(menu.vegetables[x][1]) * int(i[1])
         elif i[0][0] == 'f':
-            x = int(encrypted[1:])
+            x = int(encrypted[1:]) - 1
+            print(x)
             decrypted_product = menu.fruits[x][0]
             whole_price += int(menu.fruits[x][1]) * int(i[1])
         elif i[0][0] == 'm':
-            x = int(encrypted[1:])
+            x = int(encrypted[1:]) - 1
+            print(x)
             decrypted_product = menu.meals[x][0]
             whole_price += int(menu.meals[x][1]) * int(i[1])
         elif i[0][0] == 'd':
-            x = int(encrypted[1:])
+            x = int(encrypted[1:]) - 1
+            print(x)
             decrypted_product = menu.derinks[x][0]
             whole_price += int(menu.derinks[x][1]) * int(i[1])
         text = text + str(ith) + ". " + decrypted_product + "\n"
