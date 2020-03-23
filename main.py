@@ -300,6 +300,8 @@ def main():
         },
         fallbacks = [CommandHandler('cancel', cancel)]
     )
+
+    dp.add_handler(clear_conv_hnadler)
     dp.add_handler(show_menu_conv_handler)
     dp.add_handler(feedback_handler)
     dp.add_handler(start_handler)
