@@ -168,13 +168,14 @@ def check_show_menu(update, context):
         query.edit_message_text(
             text = bot_messages.ask_amount_of_products
         )
+        context.chat_data['data'] = data
         return bot_states.CHECK_PRODUCT_AMOUNT
     return bot_states.CHECK_MENU
 
 def check_product_amount(update, context):
     user_id = update.effective_user.id
     amount = update.message.text
-    data = update.callback_query.data
+    data = context.chat_data['data']
     send_message(context, user_id, str(amount) + str(data))
     return ConversationHandler.END
 
