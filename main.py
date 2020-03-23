@@ -29,6 +29,19 @@ custom_keyboard = [['/add', '/delete'],
 reply_markup = telegram.ReplyKeyboardMarkup(custom_keyboard, resize_keyboard = True)
 connection = psycopg2.connect(database = DB_Database, user = DB_User, password = DB_Password, host = DB_Host, port = DB_Port)
 
+def build_menu(buttons,
+               n_cols,
+               header_buttons=None,
+               footer_buttons=None):
+    menu = [buttons[i:i + n_cols] for i in range(0, len(buttons), n_cols)]
+    if header_buttons:
+        menu.insert(0, [header_buttons])
+    if footer_buttons:
+        menu.append([footer_buttons])
+    return menu
+
+### SQL Functions
+
 def sql_table(connection):
     cur = connection.cursor()
     cur.execute("CREATE TABLE IF NOT EXISTS tasks(id BIGSERIAL PRIMARY KEY, user_id integer, amount integer, product_id text)")
@@ -55,6 +68,16 @@ def sql_number_of_products(user_id):
     connection.commit()
     cur.close()
     return result
+
+def sql_get_products(user_id):
+    cur = connection.cursor()
+    cur.execute("SELECT task FROM tasks WHERE user_id = %s", (user_id, ))
+    products = cur.fetchall()
+    connection.commit()
+    cur.close()
+    return products
+
+### Functions
 
 def log_text(debug_text):
   print(debug_text)
@@ -113,17 +136,6 @@ def get_base_inline_keyboard():
         ]
     ]
     return InlineKeyboardMarkup(keyboard)
-
-def build_menu(buttons,
-               n_cols,
-               header_buttons=None,
-               footer_buttons=None):
-    menu = [buttons[i:i + n_cols] for i in range(0, len(buttons), n_cols)]
-    if header_buttons:
-        menu.insert(0, [header_buttons])
-    if footer_buttons:
-        menu.append([footer_buttons])
-    return menu
 
 def get_keyboard2(call_data):
     if call_data == "vegetables":
@@ -239,18 +251,25 @@ def check_product_amount(update, context):
         send_message(context, user_id, bot_messages.amount_is_not_number)
     return ConversationHandler.END
 
-# def get_product_list(user_id):
+def get_product_list(user_id):
+    ith = 0
+    text = ""
+    products = sql_get_products(user_id)
+    for i in products:
+        ith = ith + 1
+        send_message(context, user_id, i[0])
+    return text
+    
 
-
-# def show_user_products(update, context):
-#     user_id = update.effective_user.id
-#     user_tasks = sql_number_of_products(user_id)
-#     reply_text = ""
-#     if user_tasks > 0:
-#         reply_text = bot_messages.show_products_command_response + get_product_list(user_id)
-#     else:
-#         reply_text = bot_messages.products_empty_response
-#     send_message(context, user_id, reply_text)
+def show_user_products(update, context):
+    user_id = update.effective_user.id
+    user_tasks = sql_number_of_products(user_id)
+    reply_text = ""
+    if user_tasks > 0:
+        reply_text = bot_messages.show_products_command_response + get_product_list(user_id)
+    else:
+        reply_text = bot_messages.products_empty_response
+    send_message(context, user_id, reply_text)
 
 # def show_tasks(update, context):
 #     user_id = update.message.from_user.id
