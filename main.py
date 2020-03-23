@@ -75,8 +75,8 @@ def get_base_inline_keyboard():
         # Каждый элемент внутри списка -- это один вертикальный столбец.
         # Сколько кнопок -- столько столбцов
         [
-            InlineKeyboardButton('Овощи', callback_data = 'vegetables'),
-            InlineKeyboardButton('Фрукты', callback_data = 'fruits'),
+            InlineKeyboardButton('Овощи 🥦', callback_data = 'vegetables'),
+            InlineKeyboardButton('Фрукты 🍏', callback_data = 'fruits'),
         ],
         [
             InlineKeyboardButton('Продукты', callback_data = 'meals'),
@@ -126,7 +126,6 @@ def get_keyboard2(call_data):
             ith = ith + 1
             keyboard.append(InlineKeyboardButton(i, callback_data = "d" + str(ith)))
     keyboard.append(InlineKeyboardButton("Назад", callback_data = "back"))
-
     return InlineKeyboardMarkup(build_menu(keyboard, n_cols = 1))
 
 def show_menu(update, context):
