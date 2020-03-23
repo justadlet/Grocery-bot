@@ -263,11 +263,10 @@ def show_user_products(update, context):
     reply_text = ""
     if user_tasks > 0:
         reply_text = bot_messages.show_products_command_response + get_product_list(user_id)
-        send_message(context, user_id, reply_text)
     else:
-        user_id = update.message.from_user.id
-        reply_text = "Извините, но ваша корзина пуста!\nИспользуйте /show_menu чтобы набрать продукты в корзину"
-        send_message(context, user_id, reply_text)
+        reply_text = bot_messages.products_empty_response
+        print(reply_text)
+    context.bot.send_message(chat_id = update.message.chat_id, text = reply_text, reply_markup = reply_markup)
 
 # def show_tasks(update, context):
 #     user_id = update.message.from_user.id
