@@ -109,7 +109,6 @@ def feedback(update, context):
     for admin_id in LIST_OF_ADMINS:
         context.bot.send_message(chat_id = admin_id, text = text)
     context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.feedback_success_command_response, reply_markup = reply_markup)
-    return 
 
 def read_feedback(update, context):
     text = update.message.text
@@ -320,7 +319,6 @@ def main():
     start_handler = CommandHandler('start', start)
     help_handler = CommandHandler('help', help)
     show_user_products_handler = CommandHandler('show_products', show_user_products)
-    unknown_handler = MessageHandler(Filters.command, unknown)
     show_menu_conv_handler = ConversationHandler(
         entry_points = [CommandHandler('show_menu', show_menu)],
         states = {
@@ -343,6 +341,7 @@ def main():
         },
         fallbacks = [CommandHandler('cancel', cancel)]
     )
+    unknown_handler = MessageHandler(Filters.command, unknown)
 
     dp.add_handler(clear_conv_hnadler)
     dp.add_handler(show_menu_conv_handler)
