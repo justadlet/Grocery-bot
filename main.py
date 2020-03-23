@@ -293,7 +293,7 @@ def get_product_list(user_id):
             decrypted_product = menu.derinks[x][0] + ": " + str(i[1]) + " * " + str(menu.vegetables[x][1]) + "тг"
             whole_price += int(menu.derinks[x][1]) * int(i[1])
         text = text + str(ith) + ". " + decrypted_product + "\n"
-    text = text + "\nИтого, у вас выходит: " + str(whole_price) + "тг"
+    text = text + "\nИтого: " + str(whole_price) + "тг"
     return text
 
 def show_user_products(update, context):
