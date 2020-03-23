@@ -131,6 +131,9 @@ def get_base_inline_keyboard():
         [
             InlineKeyboardButton('Продукты', callback_data = 'meals'),
             InlineKeyboardButton('Напитки', callback_data = 'derinks'),
+        ],
+        [
+            InlineKeyboardButton("Отправить заказ администратору 🛎", callback_data = "order")
         ]
     ]
     return InlineKeyboardMarkup(keyboard)
@@ -165,7 +168,6 @@ def get_keyboard2(call_data):
             ith = ith + 1
             keyboard.append(InlineKeyboardButton(str(i[0]) + " - " + str(i[1]) + str(i[2])  , callback_data = "d" + str(ith)))
     keyboard.append(InlineKeyboardButton("Назад", callback_data = "back"))
-    keyboard.append(InlineKeyboardButton("Отправить заказ администратору 🛎", callback_data = "order"))
     return InlineKeyboardMarkup(build_menu(keyboard, n_cols = 1))
 
 def clear(update, context):
@@ -239,6 +241,7 @@ def check_show_menu(update, context):
 
 def read_user_info(update, context):
     user_info = update.message.text
+    print(user_info)
     user_id = update.message.from_user.id
     username = update.message.from_user.username
     text =  "❗️Новый заказ от клиента❗️\n\nФИО, Адрес и номер телефона:\n" + user_info + "\n\nUsername: @" + str(username) + "\n\nUser ID: " + str(user_id)
