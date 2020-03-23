@@ -47,6 +47,15 @@ def sql_clear(user_id):
     connection.commit()
     cur.close()
 
+def sql_number_of_products(user_id):
+    cur = connection.cursor()
+    cur.execute("SELECT COUNT(*) FROM tasks WHERE user_id = %s", (user_id, ))
+    number_of_tasks = cur.fetchall()
+    result = number_of_tasks[0][0]
+    connection.commit()
+    cur.close()
+    return result
+
 def log_text(debug_text):
   print(debug_text)
 
@@ -201,6 +210,26 @@ def check_product_amount(update, context):
     add_to_database(user_id, amount, data)
     send_message(context, user_id, str(amount) + " " + str(data))
     return ConversationHandler.END
+
+def show_user_products(update, context):
+    user_id = update.effective_user.id
+    user_tasks = sql_number_of_products(user_id)
+    reply_text = ""
+    if user_tasks > 0:
+        reply_text = bot_messages.ask_amount_of_products
+    else:
+        reply_text = bot_messages.products_empty_response
+    send_message(context, user_id, reply_text)
+
+# def show_tasks(update, context):
+#     user_id = update.message.from_user.id
+#     user_tasks = sql_number_of_tasks(user_id)
+#     if user_tasks > 0:
+#         whole_text = bot_messages.show_tasks_command_response + get_text(user_id)
+#     else:
+#         whole_text = bot_messages.tasks_empty_command_response
+#     context.bot.send_message(chat_id = update.message.chat_id, text = whole_text, reply_markup = reply_markup)
+
 
 def start(update, context):
     context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.start_command_response, reply_markup = reply_markup)
