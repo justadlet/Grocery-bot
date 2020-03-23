@@ -216,10 +216,10 @@ def cancel(update, context):
     return ConversationHandler.END
 
 def main():
-    updater = Updater(token = os.environ['BOT_TOKEN'], use_context = True)
+    updater = Updater(token = "1130609306:AAFFWpVoazrjy0DYd4TrvEd2cLbfwE4_3EE", use_context = True)
     dp = updater.dispatcher
     sql_table(connection)
-    
+
     feedback_handler = CommandHandler('feedback', feedback, pass_args = True, pass_chat_data = True)
     start_handler = CommandHandler('start', start)
     help_handler = CommandHandler('help', help)
