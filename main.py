@@ -135,6 +135,7 @@ def show_menu(update, context):
     return bot_states.CHECK_MENU
 
 def check_show_menu(update, context):
+    user_id = update.effective_user.id
     query = update.callback_query
     data = query.data
     current_text = update.effective_message.text
@@ -163,6 +164,11 @@ def check_show_menu(update, context):
             text = current_text,
             reply_markup = get_base_inline_keyboard()
         )
+    else:
+        query.edit_message_text(
+            text = bot_messages.ask_amount_of_products
+        )
+        return bot_states.CHECK_PRODUCT_AMOUNT
     return bot_states.CHECK_MENU
 
 def start(update, context):

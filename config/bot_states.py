@@ -1,3 +1,5 @@
 (
-  CHECK_MENU
-) = range(1)
+  CHECK_MENU,
+  READ_FEEDBACK,
+  CHECK_PRODUCT_AMOUNT
+) = range(3)
