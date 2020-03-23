@@ -71,7 +71,7 @@ def sql_number_of_products(user_id):
 
 def sql_get_products(user_id):
     cur = connection.cursor()
-    cur.execute("SELECT task FROM tasks WHERE user_id = %s", (user_id, ))
+    cur.execute("SELECT product_id FROM tasks WHERE user_id = %s", (user_id, ))
     products = cur.fetchall()
     connection.commit()
     cur.close()
