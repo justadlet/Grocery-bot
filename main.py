@@ -165,6 +165,7 @@ def get_keyboard2(call_data):
             ith = ith + 1
             keyboard.append(InlineKeyboardButton(str(i[0]) + " - " + str(i[1]) + str(i[2])  , callback_data = "d" + str(ith)))
     keyboard.append(InlineKeyboardButton("Назад", callback_data = "back"))
+    keyboard.append(InlineKeyboardButton("Отправить заказ администратору 🛎", callback_data = "order"))
     return InlineKeyboardMarkup(build_menu(keyboard, n_cols = 1))
 
 def clear(update, context):
@@ -220,11 +221,14 @@ def check_show_menu(update, context):
             text = current_text,
             reply_markup = get_keyboard2("derinks")
         )          
-    elif data == "back" :
+    elif data == "back":
         query.edit_message_text(
             text = current_text,
             reply_markup = get_base_inline_keyboard()
         )
+    elif data == "order":
+        send_message(context, update.effective_user.id, "Хорошо, отправьте пожалуйста ФИО, Адрес и ваш номер телефона через пробел для того чтобы мы связались с вами.")
+        return bot_states.READ_USER_INFO
     else:
         query.edit_message_text(
             text = bot_messages.ask_amount_of_products
@@ -232,6 +236,17 @@ def check_show_menu(update, context):
         context.chat_data['data'] = data
         return bot_states.CHECK_PRODUCT_AMOUNT
     return bot_states.CHECK_MENU
+
+def read_user_info(update, context):
+    user_info = update.message.text
+    user_id = update.message.from_user.id
+    username = update.message.from_user.username
+    text =  "❗️Новый заказ от клиента❗️\n\nФИО, Адрес и номер телефона:\n" + user_info + "\n\nUsername: @" + str(username) + "\n\nUser ID: " + str(user_id)
+    for admin_id in LIST_OF_ADMINS:
+        context.bot.send_message(chat_id = admin_id, text = text)
+    sql_clear(user_id)
+    context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.order_sent_command_response, reply_markup = reply_markup)
+    return ConversationHandler.END
 
 def add_to_database(user_id, amount, product_id):
     sql_insert(connection, user_id, amount, product_id)
@@ -242,7 +257,9 @@ def check_product_amount(update, context):
         amount = int(update.message.text)
         data = context.chat_data['data']
         add_to_database(user_id, amount, data)
-        send_message(context, user_id, str(amount) + " " + str(data))
+        reply_keyboard = get_base_inline_keyboard()
+        send_message_keyboard(context, user_id, bot_messages.show_menu_text, reply_keyboard)
+        return bot_states.CHECK_MENU
     except (IndexError, ValueError):
         send_message(context, user_id, bot_messages.amount_is_not_number)
     return ConversationHandler.END
