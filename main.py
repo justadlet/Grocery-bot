@@ -255,7 +255,7 @@ def get_product_list(user_id):
     for i in products:
         ith = ith + 1
         decrypted_product = ""
-        encrypted = i[0]
+        encrypted = str(i[0]) + " " + str(i[1])
         print(encrypted)
         # if i[0][0] == 'v':
         #     x = int(encrypted[1:])
