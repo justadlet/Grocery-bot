@@ -253,19 +253,28 @@ def get_product_list(user_id):
     products = sql_get_products(user_id)
     for i in products:
         ith = ith + 1
-        text = text + str(i[0])
+        decrypted_product = ""
+        encrypted = i[0]
+        if i[0][0] == 'v':
+            x = int(encrypted[1:])
+            print(x)
+        elif i[0][0] == 'f':
+            x = int(encrypted[1:])
+        elif i[0][0] == 'm':
+            x = int(encrypted[1:])
+        elif i[0][0] == 'd':
+            x = int(encrypted[1:])
+        text = text + str(ith) + ". " + decrypted_product_id
     return text
 
 def show_user_products(update, context):
     user_id = update.effective_user.id
     user_tasks = sql_number_of_products(user_id)
-    send_message(context, user_id, user_tasks)
     reply_text = ""
     if user_tasks > 0:
         reply_text = bot_messages.show_products_command_response + get_product_list(user_id)
     else:
         reply_text = bot_messages.products_empty_response
-        print(reply_text)
     context.bot.send_message(chat_id = update.message.chat_id, text = reply_text, reply_markup = reply_markup)
 
 # def show_tasks(update, context):
