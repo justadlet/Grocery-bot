@@ -171,6 +171,13 @@ def check_show_menu(update, context):
         return bot_states.CHECK_PRODUCT_AMOUNT
     return bot_states.CHECK_MENU
 
+def check_product_amount(update, context):
+    user_id = update.effective_user.id
+    amount = update.message.text
+    data = update.callback_query.data
+    send_message(context, user_id, str(amount) + str(data))
+    return ConversationHandler.END
+
 def start(update, context):
     context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.start_command_response, reply_markup = reply_markup)
 
@@ -194,7 +201,8 @@ def main():
     show_menu_conv_handler = ConversationHandler(
         entry_points = [CommandHandler('show_menu', show_menu)],
         states = {
-            bot_states.CHECK_MENU: [CallbackQueryHandler(check_show_menu)]
+            bot_states.CHECK_MENU: [CallbackQueryHandler(check_show_menu)],
+            bot_states.CHECK_PRODUCT_AMOUNT: [MessageHandler(Filters.text, check_product_amount)]
         },
         fallbacks = [CommandHandler('cancel', cancel)]
     )
