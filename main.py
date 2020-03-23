@@ -109,6 +109,7 @@ def feedback(update, context):
     for admin_id in LIST_OF_ADMINS:
         context.bot.send_message(chat_id = admin_id, text = text)
     context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.feedback_success_command_response, reply_markup = reply_markup)
+    return 
 
 def read_feedback(update, context):
     text = update.message.text
@@ -242,9 +243,7 @@ def check_product_amount(update, context):
         amount = int(update.message.text)
         data = context.chat_data['data']
         add_to_database(user_id, amount, data)
-        reply_keyboard = get_base_inline_keyboard()
-        send_message_keyboard(context, user_id, bot_messages.show_menu_text, reply_keyboard)
-        return bot_states.CHECK_MENU
+        send_message(context, user_id, str(amount) + " " + str(data))
     except (IndexError, ValueError):
         send_message(context, user_id, bot_messages.amount_is_not_number)
     return ConversationHandler.END
@@ -336,6 +335,13 @@ def main():
         },
         fallbacks = [CommandHandler('cancel', cancel)]
     )
+    feedback_conv_handler = ConversationHandler(
+        entry_points = [CommandHandler('feedback', feedback)],
+        states = {
+            bot_states.READ_FEEDBACK: [MessageHandler(Filters.text, read_feedback)]
+        },
+        fallbacks = [CommandHandler('cancel', cancel)]
+    )
 
     dp.add_handler(clear_conv_hnadler)
     dp.add_handler(show_menu_conv_handler)
@@ -344,6 +350,7 @@ def main():
     dp.add_handler(help_handler)
     dp.add_handler(show_user_products_handler)
     dp.add_handler(unknown_handler)
+    dp.add_handler(feedback_conv_handler)
 
     updater.start_polling()
     updater.idle()
