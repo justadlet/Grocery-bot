@@ -94,7 +94,6 @@ def send_message_keyboard(context, chat_id, text, kbrd):
     except:
         log_text('No such chat_id using a bot')
 
-
 def feedback(update, context):
     if not context.args:
         context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.feedback_write_text,  reply_markup = reply_markup)
@@ -269,6 +268,7 @@ def show_user_products(update, context):
         reply_text = bot_messages.show_products_command_response + get_product_list(user_id)
     else:
         reply_text = bot_messages.products_empty_response
+        print("gg brat")
     send_message(context, user_id, reply_text)
 
 # def show_tasks(update, context):
