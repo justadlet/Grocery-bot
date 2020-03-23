@@ -257,9 +257,8 @@ def get_product_list(user_id):
     products = sql_get_products(user_id)
     for i in products:
         ith = ith + 1
-        send_message(context, user_id, i[0])
+        print(i[0])
     return text
-    
 
 def show_user_products(update, context):
     user_id = update.effective_user.id
@@ -302,7 +301,7 @@ def main():
     feedback_handler = CommandHandler('feedback', feedback, pass_args = True, pass_chat_data = True)
     start_handler = CommandHandler('start', start)
     help_handler = CommandHandler('help', help)
-    # show_user_products_handler = CommandHandler('show_products', show_user_products)
+    show_user_products_handler = CommandHandler('show_products', show_user_products)
     unknown_handler = MessageHandler(Filters.command, unknown)
     show_menu_conv_handler = ConversationHandler(
         entry_points = [CommandHandler('show_menu', show_menu)],
@@ -326,7 +325,7 @@ def main():
     dp.add_handler(start_handler)
     dp.add_handler(help_handler)
     dp.add_handler(unknown_handler)
-    # dp.add_handler(show_user_products_handler)
+    dp.add_handler(show_user_products_handler)
 
     updater.start_polling()
     updater.idle()
