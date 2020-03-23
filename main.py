@@ -272,7 +272,7 @@ def main():
     dp.add_handler(start_handler)
     dp.add_handler(help_handler)
     dp.add_handler(unknown_handler)
-    dp.add_handler(show_user_products_handler)
+    # dp.add_handler(show_user_products_handler)
 
     updater.start_polling()
     updater.idle()
