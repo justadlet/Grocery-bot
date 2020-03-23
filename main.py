@@ -230,12 +230,12 @@ def add_to_database(user_id, amount, product_id):
 
 def check_product_amount(update, context):
     user_id = update.effective_user.id
-    try:
-        amount = update.message.text
+    amount = update.message.text
+    if isinstance(amount):
         data = context.chat_data['data']
         add_to_database(user_id, amount, data)
         send_message(context, user_id, str(amount) + " " + str(data))
-    except (IndexError, ValueError):
+    else:
         send_message(context, user_id, bot_messages.amount_is_not_number)
     return ConversationHandler.END
 
