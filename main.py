@@ -70,7 +70,7 @@ def sql_number_of_products(user_id):
 
 def sql_get_products(user_id):
     cur = connection.cursor()
-    cur.execute("SELECT product_id FROM tasks WHERE user_id = %s", (user_id, ))
+    cur.execute("SELECT product_id, amount FROM tasks WHERE user_id = %s", (user_id, ))
     products = cur.fetchall()
     connection.commit()
     cur.close()
@@ -250,21 +250,24 @@ def check_product_amount(update, context):
 def get_product_list(user_id):
     ith = 0
     text = ""
+    whole_price = 0
     products = sql_get_products(user_id)
     for i in products:
         ith = ith + 1
         decrypted_product = ""
         encrypted = i[0]
-        if i[0][0] == 'v':
-            x = int(encrypted[1:])
-            print(x)
-        elif i[0][0] == 'f':
-            x = int(encrypted[1:])
-        elif i[0][0] == 'm':
-            x = int(encrypted[1:])
-        elif i[0][0] == 'd':
-            x = int(encrypted[1:])
-        text = text + str(ith) + ". " + decrypted_product_id
+        print(encrypted)
+        # if i[0][0] == 'v':
+        #     x = int(encrypted[1:])
+        #     decrypted_product = menu.vegetables[x][0]
+        #     whole_price += menu.vegetables[x[]]
+        # elif i[0][0] == 'f':
+        #     x = int(encrypted[1:])
+        # elif i[0][0] == 'm':
+        #     x = int(encrypted[1:])
+        # elif i[0][0] == 'd':
+        #     x = int(encrypted[1:])
+        text = text + str(ith) + ". " + decrypted_product
     return text
 
 def show_user_products(update, context):
