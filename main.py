@@ -132,6 +132,7 @@ def get_keyboard2(call_data):
         ith = 0
         for i in whole_menu:
             ith = ith + 1
+            print(i)
             keyboard.append(InlineKeyboardButton(i, callback_data = "v" + str(ith)))
     elif call_data == "fruits":
         keyboard = []
@@ -211,15 +212,18 @@ def check_product_amount(update, context):
     send_message(context, user_id, str(amount) + " " + str(data))
     return ConversationHandler.END
 
-def show_user_products(update, context):
-    user_id = update.effective_user.id
-    user_tasks = sql_number_of_products(user_id)
-    reply_text = ""
-    if user_tasks > 0:
-        reply_text = bot_messages.ask_amount_of_products
-    else:
-        reply_text = bot_messages.products_empty_response
-    send_message(context, user_id, reply_text)
+# def get_product_list(user_id):
+
+
+# def show_user_products(update, context):
+#     user_id = update.effective_user.id
+#     user_tasks = sql_number_of_products(user_id)
+#     reply_text = ""
+#     if user_tasks > 0:
+#         reply_text = bot_messages.show_products_command_response + get_product_list(user_id)
+#     else:
+#         reply_text = bot_messages.products_empty_response
+#     send_message(context, user_id, reply_text)
 
 # def show_tasks(update, context):
 #     user_id = update.message.from_user.id
@@ -252,6 +256,7 @@ def main():
     feedback_handler = CommandHandler('feedback', feedback, pass_args = True, pass_chat_data = True)
     start_handler = CommandHandler('start', start)
     help_handler = CommandHandler('help', help)
+    # show_user_products_handler = CommandHandler('show_products', show_user_products)
     unknown_handler = MessageHandler(Filters.command, unknown)
     show_menu_conv_handler = ConversationHandler(
         entry_points = [CommandHandler('show_menu', show_menu)],
@@ -267,6 +272,7 @@ def main():
     dp.add_handler(start_handler)
     dp.add_handler(help_handler)
     dp.add_handler(unknown_handler)
+    dp.add_handler(show_user_products_handler)
 
     updater.start_polling()
     updater.idle()

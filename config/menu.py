@@ -1,19 +1,18 @@
-vegetables = ['Лук',
-             'Картошка',
-             'Islam']
+vegetables = [['Лук', 150],
+             ['Картошка', 200],
+             ['Islam', 1000]]
 
-fruits = ['dates',
-         'banana',
-         'apple']
+fruits = [['Fruit1', 150],
+        ['Fruit2', 200],
+        ['Fruit3', 1000]]
 
-meals = ['meal1',
-         'meal2',
-         'meal3']
+meals = [['Meal1', 150],
+        ['Meal2', 200],
+        ['Meal3', 1000]]
 
-derinks = ['Esbol meshok',
-         'govnokoder',
-         'de']
-
+derinks = [['Drink1', 150],
+        ['Drink2', 200],
+        ['Drink3', 1000]]
 
 
 
