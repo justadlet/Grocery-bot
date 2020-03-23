@@ -2,6 +2,7 @@ import telegram
 import logging
 import time
 import os
+import psycopg2
 
 from datetime import datetime
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, InlineQueryHandler, ConversationHandler, CallbackQueryHandler, CallbackContext
