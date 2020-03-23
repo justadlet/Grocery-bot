@@ -242,7 +242,9 @@ def check_product_amount(update, context):
         amount = int(update.message.text)
         data = context.chat_data['data']
         add_to_database(user_id, amount, data)
-        send_message(context, user_id, str(amount) + " " + str(data))
+        reply_keyboard = get_base_inline_keyboard()
+        send_message_keyboard(context, user_id, bot_messages.show_menu_text, reply_keyboard)
+        return bot_states.CHECK_MENU
     except (IndexError, ValueError):
         send_message(context, user_id, bot_messages.amount_is_not_number)
     return ConversationHandler.END
