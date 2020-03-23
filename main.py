@@ -50,8 +50,8 @@ def sql_clear(user_id):
 def sql_number_of_products(user_id):
     cur = connection.cursor()
     cur.execute("SELECT COUNT(*) FROM tasks WHERE user_id = %s", (user_id, ))
-    number_of_tasks = cur.fetchall()
-    result = number_of_tasks[0][0]
+    number_of_products = cur.fetchall()
+    result = number_of_products[0][0]
     connection.commit()
     cur.close()
     return result
@@ -154,9 +154,33 @@ def get_keyboard2(call_data):
         ith = 0
         for i in whole_menu:
             ith = ith + 1
-            keyboard.append(InlineKeyboardButton(str(i[0]) + " - " + str(i[1]) + str(i[2]), callback_data = "d" + str(ith)))
+            keyboard.append(InlineKeyboardButton(str(i[0]) + " - " + str(i[1]) + str(i[2])  , callback_data = "d" + str(ith)))
     keyboard.append(InlineKeyboardButton("Назад", callback_data = "back"))
     return InlineKeyboardMarkup(build_menu(keyboard, n_cols = 1))
+
+def clear(update, context):
+    keyboard = [
+        InlineKeyboardButton("Да", callback_data = '1'),
+        InlineKeyboardButton("Нет", callback_data = '2')
+    ]
+    reply_keyboard = InlineKeyboardMarkup(build_menu(keyboard, n_cols = 1))
+    context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.clear_command_confirmation, reply_markup = reply_keyboard)    
+    return bot_states.CHECK_CLEAR
+
+def check_clear(update, context):
+    query = update.callback_query
+    user_id = update.effective_user.id
+    user_tasks = sql_number_of_products(user_id)
+    print(query.data)
+    if query.data == '1':
+        if user_tasks > 0:
+            sql_clear(user_id)
+            query.edit_message_text(text = bot_messages.clear_successfully_command_response)
+        else:
+            query.edit_message_text(text = bot_messages.bucket_empty_command_response)
+    else:
+        query.edit_message_text(text = "Окей 😉")
+    return ConversationHandler.END
 
 def show_menu(update, context):
     user_id = update.effective_user.id
@@ -266,7 +290,13 @@ def main():
         },
         fallbacks = [CommandHandler('cancel', cancel)]
     )
-
+    clear_conv_hnadler = ConversationHandler(
+        entry_points = [CommandHandler('clear', clear)],
+        states = {
+            bot_states.CHECK_CLEAR: [CallbackQueryHandler(check_clear)]
+        },
+        fallbacks = [CommandHandler('cancel', cancel)]
+    )
     dp.add_handler(show_menu_conv_handler)
     dp.add_handler(feedback_handler)
     dp.add_handler(start_handler)
