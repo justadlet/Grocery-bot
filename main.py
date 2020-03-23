@@ -10,11 +10,11 @@ from config import bot_messages, bot_states, menu
 from functools import wraps
 
 
-# DB_Host = os.environ['DB_Host']
-# DB_Database = os.environ['DB_Database']
-# DB_User = os.environ['DB_User']
-# DB_Port = os.environ['DB_Port']
-# DB_Password = os.environ['DB_Password']
+DB_Host = os.environ['DB_Host']
+DB_Database = os.environ['DB_Database']
+DB_User = os.environ['DB_User']
+DB_Port = os.environ['DB_Port']
+DB_Password = os.environ['DB_Password']
 
 logging.basicConfig(format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                      level = logging.INFO)
@@ -27,6 +27,26 @@ custom_keyboard = [['/add', '/delete'],
                    ['/feedback', '/help'],
                    ['/admin_help']]
 reply_markup = telegram.ReplyKeyboardMarkup(custom_keyboard, resize_keyboard = True)
+connection = psycopg2.connect(database = DB_Database, user = DB_User, password = DB_Password, host = DB_Host, port = DB_Port)
+
+def sql_table(connection):
+    cur = connection.cursor()
+    cur.execute("CREATE TABLE IF NOT EXISTS tasks(id BIGSERIAL PRIMARY KEY, user_id integer, amount integer, product_id text)")
+    connection.commit()
+    cur.close()
+
+def sql_insert(connection, user_id, amount, product_id):
+    cur = connection.cursor()
+    cur.execute("INSERT INTO tasks(user_id, amount, product_id) VALUES(%s, %s, %s)", (user_id, amount, product_id, ))
+    connection.commit()
+    cur.close()
+
+def sql_clear(user_id):
+    cur = connection.cursor()
+    cur.execute("DELETE FROM tasks WHERE user_id = %s", (user_id, ))
+    connection.commit()
+    cur.close()
+
 def log_text(debug_text):
   print(debug_text)
 
@@ -135,7 +155,6 @@ def show_menu(update, context):
     return bot_states.CHECK_MENU
 
 def check_show_menu(update, context):
-    user_id = update.effective_user.id
     query = update.callback_query
     data = query.data
     current_text = update.effective_message.text
@@ -172,11 +191,15 @@ def check_show_menu(update, context):
         return bot_states.CHECK_PRODUCT_AMOUNT
     return bot_states.CHECK_MENU
 
+def add_to_database(user_id, amount, product_id):
+    sql_insert(connection, user_id, amount, product_id)
+
 def check_product_amount(update, context):
     user_id = update.effective_user.id
     amount = update.message.text
     data = context.chat_data['data']
-    send_message(context, user_id, str(amount) + str(data))
+    add_to_database(user_id, amount, data)
+    send_message(context, user_id, str(amount) + " " + str(data))
     return ConversationHandler.END
 
 def start(update, context):
@@ -193,8 +216,10 @@ def cancel(update, context):
     return ConversationHandler.END
 
 def main():
-    updater = Updater(token = "1130609306:AAFFWpVoazrjy0DYd4TrvEd2cLbfwE4_3EE", use_context = True)
+    updater = Updater(token = os.environ['BOT_TOKEN'], use_context = True)
     dp = updater.dispatcher
+    sql_table(connection)
+    
     feedback_handler = CommandHandler('feedback', feedback, pass_args = True, pass_chat_data = True)
     start_handler = CommandHandler('start', start)
     help_handler = CommandHandler('help', help)
