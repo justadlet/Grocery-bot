@@ -265,6 +265,7 @@ def show_user_products(update, context):
         reply_text = bot_messages.show_products_command_response + get_product_list(user_id)
         send_message(context, user_id, reply_text)
     else:
+        user_id = update.message.from_user.id
         reply_text = "Извините, но ваша корзина пуста!\nИспользуйте /show_menu чтобы набрать продукты в корзину"
         send_message(context, user_id, reply_text)
 
