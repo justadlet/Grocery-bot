@@ -20,7 +20,7 @@ logging.basicConfig(format = '%(asctime)s - %(name)s - %(levelname)s - %(message
                      level = logging.INFO)
                      
 logger = logging.getLogger(__name__)
-LIST_OF_ADMINS = [251961384]
+LIST_OF_ADMINS = [251961384, 771840280]
 custom_keyboard = [['/show_menu', '/show_products'],
                    ['/start', '/cancel'],
                    ['/help', '/clear'],
@@ -105,7 +105,7 @@ def feedback(update, context):
             text = text + " " + word
     user_id = update.message.from_user.id
     username = update.message.from_user.username
-    text = "❗️Хей, пользоветель бота отправил новый фидбэк всем админам: ❗️\n\nFeedback:\n" + text + "\n\nUsername: @" + str(username) + "\n\nUser ID: " + str(user_id)
+    text = "❗️Хей, пользоветель бота отправил новый фидбэк всем админам: ❗️\n\nFeedback:\n" + text + "\n\n______________________________\nUsername: @" + str(username) + "\n\nUser ID: " + str(user_id)
     for admin_id in LIST_OF_ADMINS:
         context.bot.send_message(chat_id = admin_id, text = text)
     context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.feedback_success_command_response, reply_markup = reply_markup)
