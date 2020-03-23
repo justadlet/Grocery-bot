@@ -244,7 +244,7 @@ def read_user_info(update, context):
     print(user_info)
     user_id = update.message.from_user.id
     username = update.message.from_user.username
-    text =  "❗️Новый заказ от клиента❗️\n\nФИО, Адрес и номер телефона:\n" + user_info + "\n\nUsername: @" + str(username) + "\n\nUser ID: " + str(user_id)
+    text =  "❗️Новый заказ от клиента❗️\n\nФИО, Адрес и номер телефона:\n" + user_info + "\n\nUsername: @" + str(username) + "\n\nUser ID: " + str(user_id) + "\n\nЗаказ клиента: " + get_product_list(user_id)
     for admin_id in LIST_OF_ADMINS:
         context.bot.send_message(chat_id = admin_id, text = text)
     sql_clear(user_id)
