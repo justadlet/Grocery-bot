@@ -257,12 +257,13 @@ def get_product_list(user_id):
     products = sql_get_products(user_id)
     for i in products:
         ith = ith + 1
-        print(i[0])
+        text = text + str(i[0])
     return text
 
 def show_user_products(update, context):
     user_id = update.effective_user.id
     user_tasks = sql_number_of_products(user_id)
+    send_message(context, user_id, user_tasks)
     reply_text = ""
     if user_tasks > 0:
         reply_text = bot_messages.show_products_command_response + get_product_list(user_id)
