@@ -9,7 +9,6 @@ from telegram import InlineQueryResultArticle, InputTextMessageContent, ReplyKey
 from config import bot_messages, bot_states, menu
 from functools import wraps
 
-
 DB_Host = os.environ['DB_Host']
 DB_Database = os.environ['DB_Database']
 DB_User = os.environ['DB_User']
@@ -216,7 +215,7 @@ def cancel(update, context):
     return ConversationHandler.END
 
 def main():
-    updater = Updater(token = "1130609306:AAFFWpVoazrjy0DYd4TrvEd2cLbfwE4_3EE", use_context = True)
+    updater = Updater(token = os.environ['BOT_TOKEN'], use_context = True)
     dp = updater.dispatcher
     sql_table(connection)
 
@@ -238,8 +237,8 @@ def main():
     dp.add_handler(start_handler)
     dp.add_handler(help_handler)
     dp.add_handler(unknown_handler)
+
     updater.start_polling()
     updater.idle()
-
 if __name__ == '__main__':
     main()
