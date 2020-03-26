@@ -175,6 +175,7 @@ def get_product_list(user_id):
     print ("Hi in get_product_list()")
     for i in products:
         ith = ith + 1
+        print(str(ith) + " " + i + "\n")
         decrypted_product = ""
         encrypted = i[0]
         if i[0][0] == 'v':
@@ -250,7 +251,7 @@ def check_clear(update, context):
             sql_clear(user_id)
         reply_text = "❗️Ваша корзина🧺 успешно очищена.\n\n" + reply_text
     else:
-        reply_text = "❗️Вы отменили очистку корзины🧺.\n\n" + reply_text
+        reply_text = "❗️Вы успешно отменили очистку корзины🧺.\n\n" + reply_text
     query.edit_message_text(
         text = reply_text,
         reply_markup = reply_keyboard
