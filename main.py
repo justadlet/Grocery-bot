@@ -155,7 +155,7 @@ def get_keyboard2(call_data):
         for i in whole_menu:
             ith = ith + 1
             keyboard.append(InlineKeyboardButton(str(i[0]) + " - " + str(i[1]) + str(i[2])  , callback_data = "d" + str(ith)))
-    keyboard.append(InlineKeyboardButton("Назад", callback_data = "back"))
+    keyboard.append(InlineKeyboardButton("⬅️ Назад", callback_data = "back"))
     return InlineKeyboardMarkup(build_menu(keyboard, n_cols = 1))
 
 def get_menu_text(user_id):
