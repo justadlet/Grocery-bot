@@ -211,6 +211,7 @@ def feedback(update, context):
     user_id = update.effective_user.id
     print("In feedback()")
     if not context.args:
+        print("In if context.args")
         context.bot.send_message(chat_id = user_id, text = bot_messages.feedback_write_text,  reply_markup = reply_markup)
         return bot_states.READ_FEEDBACK
     text = context.args[0]
