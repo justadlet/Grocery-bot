@@ -94,13 +94,13 @@ def send_message(context, chat_id, text):
     try:
         context.bot.send_message(chat_id = chat_id, text = text, reply_markup = reply_markup)
     except:
-        log_text('No such chat_id using a bot')
+        log_text('No such chat_id = ' + str(chat_id) + ' using a bot')
 
 def send_message_keyboard(context, chat_id, text, keyboard):
     try:
         context.bot.send_message(chat_id = chat_id, text = text, reply_markup = keyboard)
     except:
-        log_text('No such chat_id using a bot (kbrd)')
+        log_text('No such chat_id = ' + str(chat_id) + ' using a bot (kbrd)')
 
 def get_base_inline_keyboard():
     keyboard = [
@@ -242,7 +242,6 @@ def check_clear(update, context):
 
 def show_menu(update, context):
     user_id = update.effective_user.id
-    print("In show_menu1")
     reply_keyboard = get_base_inline_keyboard()
     reply_text = get_menu_text(user_id)
     send_message_keyboard(context, user_id, reply_text, reply_keyboard)
