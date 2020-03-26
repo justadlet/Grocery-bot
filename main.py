@@ -297,8 +297,7 @@ def get_product_list(user_id):
     text = text + "\nИтого: " + str(whole_price) + "тг"
     return text
 
-def show_user_products(update, context):
-    user_id = update.effective_user.id
+def show_user_products(user_id):
     user_tasks = sql_number_of_products(user_id)
     reply_text = ""
     if user_tasks > 0:
