@@ -92,7 +92,7 @@ def log_text(debug_text):
 
 def send_message(context, chat_id, text):
     try:
-        context.bot.send_message(chat_id = chat_id, text = text, parse_mode = "Markdown", reply_markup = reply_markup)
+        context.bot.send_message(chat_id = chat_id, text = text, reply_markup = reply_markup)
     except:
         log_text('No such chat_id using a bot')
 
