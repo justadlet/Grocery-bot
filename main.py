@@ -78,6 +78,10 @@ def sql_get_products(user_id):
 
 ### Functions
 
+def get_id(context, update):
+    id = update.message.chat_id
+    return id
+
 def add_to_database(user_id, amount, product_id):
     sql_insert(connection, user_id, amount, product_id)
 
@@ -228,10 +232,6 @@ def read_feedback(update, context):
     context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.feedback_success_command_response, reply_markup = reply_markup)
     return ConversationHandler.END
 
-def get_id(context, update):
-    id = update.message.from_user.id
-    return id
-
 def check_clear(update, context):
     query = update.callback_query
     user_id = get_id(context, update)
@@ -241,12 +241,8 @@ def check_clear(update, context):
     if query.data == '1':
         if user_tasks > 0:
             sql_clear(user_id)
-            query.edit_message_text(text = bot_messages.clear_successfully_command_response)
-        else:
-            query.edit_message_text(text = bot_messages.bucket_empty_command_response)
         reply_text = "Ваша корзина🧺 успешно очищена.\n\n" + reply_text
     else:
-        query.edit_message_text(text = "Окей 😉")
         reply_text = "Вы отменили очистку корзины🧺.\n\n" + reply_text
     query.edit_message_text(
         text = reply_text,
