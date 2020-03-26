@@ -212,7 +212,7 @@ def feedback(update, context):
     print("In feedback()")
     if not context.args:
         print("In if context.args")
-        context.bot.send_message(chat_id = user_id, text = bot_messages.feedback_write_text,  reply_markup = reply_markup)
+        send_message(context, user_id, bot_messages.feedback_write_text)
         return bot_states.READ_FEEDBACK
     text = context.args[0]
     ith = 0
@@ -396,7 +396,6 @@ def main():
     dp = updater.dispatcher
     sql_table(connection)
 
-    feedback_handler = CommandHandler('feedback', feedback, pass_args = True, pass_chat_data = True)
     start_handler = CommandHandler('start', start)
     help_handler = CommandHandler('help', help)
     show_menu_conv_handler = ConversationHandler(
@@ -411,7 +410,7 @@ def main():
         fallbacks = [CommandHandler('cancel', cancel)]
     )
     feedback_conv_handler = ConversationHandler(
-        entry_points = [CommandHandler('feedback', feedback)],
+        entry_points = [CommandHandler('feedback', feedback, pass_args = True, pass_chat_data = True)],
         states = {
             bot_states.READ_FEEDBACK: [MessageHandler(Filters.text, read_feedback)]
         },
