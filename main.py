@@ -365,7 +365,7 @@ def check_product_amount(update, context):
 def check_delete(update, context):
     user_id = update.effective_user.id
     query = update.callback_query
-    data = query.callback_data
+    data = query.data
     send_message(context, user_id, data)
     sql_delete(user_id, data)
     query.edit_message_text (
