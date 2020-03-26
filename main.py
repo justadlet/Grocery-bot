@@ -199,6 +199,7 @@ def check_clear(update, context):
 
 def show_menu(update, context):
     user_id = update.message.chat_id
+    send_message(context, user_id, "Test")
     reply_keyboard = get_base_inline_keyboard()
     print("in show_menu1")
     reply_text = str(bot_messages.show_menu_text) + "\n" + str(show_user_products(user_id))
