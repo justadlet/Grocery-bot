@@ -211,10 +211,13 @@ def show_menu(update, context):
     user_products = int(sql_number_of_products(user_id))
     reply_keyboard = get_base_inline_keyboard()
     reply_text = str(bot_messages.show_menu_text) + "\n\n"
+    send_message(context, user_id, user_products)
     if user_products > 0:
+        print(1)
         send_message(context, user_id, "Извините, но ваша корзина пуста!Используйте /show_menu чтобы набрать продукты в корзину")
         reply_text += "Извините, но ваша корзина пуста!Используйте /show_menu чтобы набрать продукты в корзину"
     else:
+        print(2)
         send_message(context, user_id, "Извините, но ваша корзина пуста!\nИспользуйте /show_menu чтобы набрать продукты в корзину")
         reply_text += "Извините, но ваша корзина пуста!\nИспользуйте /show_menu чтобы набрать продукты в корзину"
     send_message_keyboard(context, user_id, reply_text, reply_keyboard)
