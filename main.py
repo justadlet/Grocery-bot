@@ -165,7 +165,7 @@ def get_menu_text(user_id):
         reply_text += bot_messages.show_products_command_response + "\n" + str(get_product_list(user_id))
     else:
         reply_text += bot_messages.products_empty_response
-    return reply_text
+    return str(reply_text)
 
 def get_product_list(user_id):
     ith = 0
@@ -190,12 +190,12 @@ def get_product_list(user_id):
             whole_price += int(menu.meals[x][1]) * int(i[1])
         elif i[0][0] == 'd':
             x = int(encrypted[1:]) - 1
-            
+
             decrypted_product = menu.derinks[x][0] + ": " + str(i[1]) + " * " + str(menu.derinks[x][1]) + "тг = " + str(int(i[1] * menu.derinks[x][1])) + "тг"  
             whole_price += int(menu.derinks[x][1]) * int(i[1])
         text = text + str(ith) + ". " + decrypted_product + "\n"
     text = text + "\nИтого: " + str(whole_price) + "тг"
-    return text
+    return str(text)
 
 def show_user_products(user_id):
     user_tasks = sql_number_of_products(user_id)
