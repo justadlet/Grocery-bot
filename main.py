@@ -208,16 +208,11 @@ def show_user_products(user_id):
 
 def show_menu(update, context):
     user_id = update.message.chat_id
+    user_products = int(sql_number_of_products(user_id))
+    send_message(context, user_id, user_products)
     reply_keyboard = get_base_inline_keyboard()
-    print("in show_menu1")
     reply_text = str(bot_messages.show_menu_text) + "\n\n"
-    reply_text += show_user_products(user_id)
-    print("in show_menu2")
-    print(reply_text)
-    text = show_user_products
-    send_message(context, user_id, text)
     send_message_keyboard(context, user_id, reply_text, reply_keyboard)
-    print("in show_menu3")
     return bot_states.CHECK_MENU
 
 def check_show_menu(update, context):
