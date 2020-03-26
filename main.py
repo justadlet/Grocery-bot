@@ -345,6 +345,7 @@ def check_product_amount(update, context):
 def delete(update, context):
     reply_keyboard = []
     user_id = update.effective_user.id
+    query = update.callback_query
     products = sql_get_products(user_id)
     for i in products:
         decrypted_product = ""
@@ -362,7 +363,10 @@ def delete(update, context):
             x = int(encrypted[1:]) - 1
             decrypted_product = menu.derinks[x][0] + ": " + str(i[1]) + " * " + str(menu.derinks[x][1]) + "тг = " + str(int(i[1] * menu.derinks[x][1])) + "тг"  
         reply_keyboard.append(InlineKeyboardButton(decrypted_product, callback_data = str(encrypted)))
-    context.bot.send_message(chat_id = user_id, text = "Хорошо, выберите продукт который вы хотите удалить из корзины🧺: ", reply_markup = reply_keyboard)
+    query.edit_message_text(
+        text = "Хорошо, выберите продукт который вы хотите удалить из корзины🧺: ",
+        reply_markup = reply_keyboard
+    )
     return bot_states.CHECK_DELETE
 
 def check_delete(update, context):
