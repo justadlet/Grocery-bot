@@ -61,7 +61,7 @@ def sql_clear(user_id):
 
 def sql_delete(user_id, product_id):
     cur = connection.cursor()
-    cur.execute("DELETE FROM tasks WHERE user_id = %s AND product_id = %s", (user_id, product_id))
+    cur.execute("DELETE FROM tasks WHERE user_id = %s AND product_id = %s", (user_id, product_id, ))
     connection.commit()
     cur.close()
 
