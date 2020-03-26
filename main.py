@@ -208,8 +208,9 @@ def show_user_products(user_id):
 ### Update Functions
 
 def feedback(update, context):
+    print("In feedback()")
     if not context.args:
-        context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.feedback_write_text,  reply_markup = reply_markup)
+        context.bot.send_message(chat_id = update.effective_user.chat_id, text = bot_messages.feedback_write_text,  reply_markup = reply_markup)
         return bot_states.READ_FEEDBACK
     text = context.args[0]
     ith = 0
