@@ -236,6 +236,7 @@ def check_clear(update, context):
     query = update.callback_query
     user_id = get_id(context, update)
     reply_keyboard = get_base_inline_keyboard()
+    user_tasks = sql_number_of_products(user_id)
     reply_text = get_menu_text(user_id)
     if query.data == '1':
         if user_tasks > 0:
