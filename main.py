@@ -211,7 +211,7 @@ def feedback(update, context):
         ith = ith + 1
         if ith > 1:
             text = text + " " + word
-    user_id = update.message.chat_id
+    user_id = update.effective_user.id
     username = update.message.from_user.username
     text = "❗️Хей, пользоветель бота отправил новый фидбэк всем админам: ❗️\n\nFeedback:\n" + text + "\n\n______________________________\nUsername: @" + str(username) + "\n\nUser ID: " + str(user_id)
     for admin_id in LIST_OF_ADMINS:
@@ -220,7 +220,7 @@ def feedback(update, context):
 
 def read_feedback(update, context):
     text = update.message.text
-    user_id = update.message.chat_id
+    user_id = update.effective_user.id
     username = update.message.from_user.username
     text =  "❗️Хей, пользоветель бота отправил новый фидбэк всем админам: ❗️\n\nFeedback:\n" + text + "\n\nUsername: @" + str(username) + "\n\nUser ID: " + str(user_id)
     for admin_id in LIST_OF_ADMINS:
@@ -230,7 +230,7 @@ def read_feedback(update, context):
 
 def check_clear(update, context):
     query = update.callback_query
-    user_id = update.message.chat_id
+    user_id = update.effective_user.id
     reply_keyboard = get_base_inline_keyboard()
     user_tasks = sql_number_of_products(user_id)
     reply_text = get_menu_text(user_id)
@@ -247,7 +247,7 @@ def check_clear(update, context):
     return bot_states.CHECK_MENU
 
 def show_menu(update, context):
-    user_id = update.message.chat_id
+    user_id = update.effective_user.id
     reply_keyboard = get_base_inline_keyboard()
     reply_text = get_menu_text(user_id)
     context.bot.send_message(chat_id = user_id, text = reply_text, reply_markup = reply_keyboard)
@@ -307,7 +307,7 @@ def check_show_menu(update, context):
 def read_user_info(update, context):
     user_info = update.message.text
     print(user_info)
-    user_id = update.message.chat_id
+    user_id = update.effective_user.id
     username = update.message.from_user.username
     text =  "❗️Новый заказ от клиента❗️\n\n**ФИО, Адрес и номер телефона:**\n" + user_info + "\n\nUsername: @" + str(username) + "\n\nUser ID: " + str(user_id) + "\n\nЗаказ клиента: \n" + get_product_list(user_id)
     for admin_id in LIST_OF_ADMINS:
@@ -317,7 +317,7 @@ def read_user_info(update, context):
     return ConversationHandler.END
 
 def check_product_amount(update, context):
-    user_id = update.message.chat_id
+    user_id = update.effective_user.id
     try:
         amount = int(update.message.text)
         data = context.chat_data['data']
