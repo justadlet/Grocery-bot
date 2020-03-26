@@ -21,7 +21,7 @@ logging.basicConfig(format = '%(asctime)s - %(name)s - %(levelname)s - %(message
                      
 logger = logging.getLogger(__name__)
 LIST_OF_ADMINS = [251961384, 771840280]
-custom_keyboard = [['📋Показать меню'],
+custom_keyboard = [['📋Show the menu'],
                    ['/start', 'ℹ️Помощь'],
                    ['✍🏻Написать отзыв']]
 
@@ -401,7 +401,7 @@ def main():
     start_handler = CommandHandler('start', start)
     help_handler = PrefixHandler('ℹ️', 'Помощь', help)
     show_menu_conv_handler = ConversationHandler(
-        entry_points = [PrefixHandler('📋', "Показать меню",show_menu)],
+        entry_points = [PrefixHandler('📋', "Show the menu", show_menu)],
         states = {
             bot_states.CHECK_MENU: [CallbackQueryHandler(check_show_menu)],
             bot_states.CHECK_PRODUCT_AMOUNT: [MessageHandler(Filters.text, check_product_amount)],
