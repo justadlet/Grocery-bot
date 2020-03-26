@@ -21,9 +21,9 @@ logging.basicConfig(format = '%(asctime)s - %(name)s - %(levelname)s - %(message
                      
 logger = logging.getLogger(__name__)
 LIST_OF_ADMINS = [251961384, 771840280]
-custom_keyboard = [['📋Show the menu'],
+custom_keyboard = [['📋Меню'],
                    ['/start', 'ℹ️Помощь'],
-                   ['✍🏻Написать отзыв']]
+                   ['✍🏻Отзыв']]
 
 reply_markup = telegram.ReplyKeyboardMarkup(custom_keyboard, resize_keyboard = True)
 connection = psycopg2.connect(database = DB_Database, user = DB_User, password = DB_Password, host = DB_Host, port = DB_Port)
@@ -388,7 +388,7 @@ def main():
     start_handler = CommandHandler('start', start)
     help_handler = PrefixHandler('ℹ️', 'Помощь', help)
     show_menu_conv_handler = ConversationHandler(
-        entry_points = [PrefixHandler('📋', 'Show the menu', show_menu)],
+        entry_points = [PrefixHandler('📋', 'Меню', show_menu)],
         states = {
             bot_states.CHECK_MENU: [CallbackQueryHandler(check_show_menu)],
             bot_states.CHECK_PRODUCT_AMOUNT: [MessageHandler(Filters.text, check_product_amount)],
@@ -399,7 +399,7 @@ def main():
         fallbacks = [RegexHandler('[/]*', done)]
     )
     feedback_conv_handler = ConversationHandler(
-        entry_points = [PrefixHandler('✍🏻', 'Написать отзыв', feedback)],
+        entry_points = [PrefixHandler('✍🏻', 'Отзыв', feedback)],
         states = {
             bot_states.READ_FEEDBACK: [MessageHandler(Filters.text, read_feedback)]
         },
