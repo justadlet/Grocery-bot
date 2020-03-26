@@ -383,8 +383,8 @@ def help(update, context):
 def unknown(update, context):
     context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.unknown_command_response, reply_markup = reply_markup)
 
-def cancel(update, context):
-    send_message(context, update.effective_user.id,, bot_messages.cancelled_successfully)
+def done(update, context):
+    send_message(context, update.effective_user.id, bot_messages.cancelled_successfully)
     return ConversationHandler.END
 
 def main():
@@ -403,14 +403,14 @@ def main():
             bot_states.CHECK_CLEAR: [CallbackQueryHandler(check_clear)],
             bot_states.CHECK_DELETE: [CallbackQueryHandler(check_delete)]
         },
-        fallbacks = [RegexHandler('[/]*', cancel)]
+        fallbacks = [RegexHandler('[/]*', done)]
     )
     feedback_conv_handler = ConversationHandler(
         entry_points = [CommandHandler('feedback', feedback, pass_args = True, pass_chat_data = True)],
         states = {
             bot_states.READ_FEEDBACK: [MessageHandler(Filters.text, read_feedback)]
         },
-        fallbacks = [RegexHandler('[/]*', cancel)]
+        fallbacks = [RegexHandler('[/]*', done)]
     )
     unknown_handler = MessageHandler(Filters.command, unknown)
 
