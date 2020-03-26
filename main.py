@@ -5,7 +5,7 @@ import time
 import os
 
 from datetime import datetime
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, InlineQueryHandler, ConversationHandler, CallbackQueryHandler, CallbackContext, RegexHandler
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, InlineQueryHandler, ConversationHandler, CallbackQueryHandler, CallbackContext, RegexHandler, PrefixHandler
 from telegram import InlineQueryResultArticle, InputTextMessageContent, ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup
 from config import bot_messages, bot_states, menu
 from functools import wraps
@@ -21,10 +21,10 @@ logging.basicConfig(format = '%(asctime)s - %(name)s - %(levelname)s - %(message
                      
 logger = logging.getLogger(__name__)
 LIST_OF_ADMINS = [251961384, 771840280]
-custom_keyboard = [['/show_menu'],
-                   ['/start', '/cancel'],
-                   ['/help', '/clear'],
-                   ['/feedback']]
+custom_keyboard = [['📋Показать меню'],
+                   ['/start', 'ℹ️Помощь'],
+                   ['✍🏻Написать отзыв']]
+
 reply_markup = telegram.ReplyKeyboardMarkup(custom_keyboard, resize_keyboard = True)
 connection = psycopg2.connect(database = DB_Database, user = DB_User, password = DB_Password, host = DB_Host, port = DB_Port)
 
@@ -399,9 +399,9 @@ def main():
     sql_table(connection)
 
     start_handler = CommandHandler('start', start)
-    help_handler = CommandHandler('help', help)
+    help_handler = PrefixHandler('ℹ️', 'Помощь', help)
     show_menu_conv_handler = ConversationHandler(
-        entry_points = [CommandHandler('show_menu', show_menu)],
+        entry_points = [PrefixHandler('📋', "Показать меню",show_menu)],
         states = {
             bot_states.CHECK_MENU: [CallbackQueryHandler(check_show_menu)],
             bot_states.CHECK_PRODUCT_AMOUNT: [MessageHandler(Filters.text, check_product_amount)],
@@ -412,7 +412,7 @@ def main():
         fallbacks = [RegexHandler('[/]*', done)]
     )
     feedback_conv_handler = ConversationHandler(
-        entry_points = [CommandHandler('feedback', feedback, pass_args = True, pass_chat_data = True)],
+        entry_points = [PrefixHandler('✍🏻', "Написать отзыв", feedback, pass_args = True, pass_chat_data = True)],
         states = {
             bot_states.READ_FEEDBACK: [MessageHandler(Filters.text, read_feedback)]
         },
