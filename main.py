@@ -197,14 +197,23 @@ def check_clear(update, context):
         query.edit_message_text(text = "Окей 😉")
     return ConversationHandler.END
 
+def show_user_products(user_id):
+    user_tasks = sql_number_of_products(user_id)
+    reply_text = ""
+    if user_tasks > 0:
+        reply_text = bot_messages.show_products_command_response + str(get_product_list(user_id))
+    else:
+        reply_text = bot_messages.products_empty_response
+    return reply_text
+
 def show_menu(update, context):
     user_id = update.message.chat_id
     reply_keyboard = get_base_inline_keyboard()
     print("in show_menu1")
-    reply_text = str(bot_messages.show_menu_text) + "\n" + str(show_user_products(user_id))
+    reply_text = str(bot_messages.show_menu_text) + "\n\n" + str(show_user_products(user_id))
     print("in show_menu2")
     print(reply_text)
-    send_message_keyboard(context, user_id, "Test", reply_keyboard)
+    send_message_keyboard(context, user_id, reply_text, reply_keyboard)
     print("in show_menu3")
     return bot_states.CHECK_MENU
 
@@ -304,25 +313,6 @@ def get_product_list(user_id):
         text = text + str(ith) + ". " + decrypted_product + "\n"
     text = text + "\nИтого: " + str(whole_price) + "тг"
     return text
-
-def show_user_products(user_id):
-    user_tasks = sql_number_of_products(user_id)
-    reply_text = ""
-    if user_tasks > 0:
-        reply_text = bot_messages.show_products_command_response + get_product_list(user_id)
-    else:
-        reply_text = bot_messages.products_empty_response
-    return reply_text
-
-# def show_tasks(update, context):
-#     user_id = update.message.from_user.id
-#     user_tasks = sql_number_of_tasks(user_id)
-#     if user_tasks > 0:
-#         whole_text = bot_messages.show_tasks_command_response + get_text(user_id)
-#     else:
-#         whole_text = bot_messages.tasks_empty_command_response
-#     context.bot.send_message(chat_id = update.message.chat_id, text = whole_text, reply_markup = reply_markup)
-
 
 def start(update, context):
     context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.start_command_response, reply_markup = reply_markup)
