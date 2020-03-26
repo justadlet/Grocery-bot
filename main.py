@@ -297,7 +297,31 @@ def check_show_menu(update, context):
         send_message(context, update.effective_user.id, "Хорошо, отправьте пожалуйста ФИО, Адрес и ваш номер телефона через пробел для того чтобы мы связались с вами.")
         return bot_states.READ_USER_INFO
     elif data == "delete":
-        return bot_states.DELETE_PRODUCT
+        reply_keyboard = []
+        user_id = update.effective_user.id
+        query = update.callback_query
+        products = sql_get_products(user_id)
+        for i in products:
+            decrypted_product = ""
+            encrypted = i[0]
+            if i[0][0] == 'v':
+                x = int(encrypted[1:]) - 1
+                decrypted_product = menu.vegetables[x][0] + ": " + str(i[1]) + " * " + str(menu.vegetables[x][1]) + "тг = " + str(int(i[1] * menu.vegetables[x][1])) + "тг"  
+            elif i[0][0] == 'f':
+                x = int(encrypted[1:]) - 1
+                decrypted_product = menu.fruits[x][0] + ": " + str(i[1]) + " * " + str(menu.fruits[x][1]) + "тг = " + str(int(i[1] * menu.fruits[x][1])) + "тг"  
+            elif i[0][0] == 'm':
+                x = int(encrypted[1:]) - 1
+                decrypted_product = menu.meals[x][0] + ": " + str(i[1]) + " * " + str(menu.meals[x][1]) + "тг = " + str(int(i[1] * menu.meals[x][1])) + "тг"  
+            elif i[0][0] == 'd':
+                x = int(encrypted[1:]) - 1
+                decrypted_product = menu.derinks[x][0] + ": " + str(i[1]) + " * " + str(menu.derinks[x][1]) + "тг = " + str(int(i[1] * menu.derinks[x][1])) + "тг"  
+            reply_keyboard.append(InlineKeyboardButton(decrypted_product, callback_data = str(encrypted)))
+        query.edit_message_text(
+            text = "Хорошо, выберите продукт который вы хотите удалить из корзины🧺: ",
+            reply_markup = InlineKeyboardMarkup(build_menu(reply_keyboard, n_cols = 1))
+        )
+        return bot_states.CHECK_DELETE
     elif data == "clear":
         keyboard = [
             InlineKeyboardButton("Да", callback_data = '1'),
@@ -342,34 +366,6 @@ def check_product_amount(update, context):
         send_message(context, user_id, bot_messages.amount_is_not_number)
     return ConversationHandler.END
 
-def delete(update, context):
-    print("In delete()")
-    reply_keyboard = []
-    user_id = update.effective_user.id
-    query = update.callback_query
-    products = sql_get_products(user_id)
-    for i in products:
-        decrypted_product = ""
-        encrypted = i[0]
-        if i[0][0] == 'v':
-            x = int(encrypted[1:]) - 1
-            decrypted_product = menu.vegetables[x][0] + ": " + str(i[1]) + " * " + str(menu.vegetables[x][1]) + "тг = " + str(int(i[1] * menu.vegetables[x][1])) + "тг"  
-        elif i[0][0] == 'f':
-            x = int(encrypted[1:]) - 1
-            decrypted_product = menu.fruits[x][0] + ": " + str(i[1]) + " * " + str(menu.fruits[x][1]) + "тг = " + str(int(i[1] * menu.fruits[x][1])) + "тг"  
-        elif i[0][0] == 'm':
-            x = int(encrypted[1:]) - 1
-            decrypted_product = menu.meals[x][0] + ": " + str(i[1]) + " * " + str(menu.meals[x][1]) + "тг = " + str(int(i[1] * menu.meals[x][1])) + "тг"  
-        elif i[0][0] == 'd':
-            x = int(encrypted[1:]) - 1
-            decrypted_product = menu.derinks[x][0] + ": " + str(i[1]) + " * " + str(menu.derinks[x][1]) + "тг = " + str(int(i[1] * menu.derinks[x][1])) + "тг"  
-        reply_keyboard.append(InlineKeyboardButton(decrypted_product, callback_data = str(encrypted)))
-    query.edit_message_text(
-        text = "Хорошо, выберите продукт который вы хотите удалить из корзины🧺: ",
-        reply_markup = InlineKeyboardMarkup(build_menu(reply_keyboard, n_cols = 1))
-    )
-    return bot_states.CHECK_DELETE
-
 def check_delete(update, context):
     user_id = update.effective_user.id
     query = update.callback_query
@@ -410,7 +406,6 @@ def main():
             bot_states.CHECK_PRODUCT_AMOUNT: [MessageHandler(Filters.text, check_product_amount)],
             bot_states.READ_USER_INFO: [MessageHandler(Filters.text, read_user_info)],
             bot_states.CHECK_CLEAR: [CallbackQueryHandler(check_clear)],
-            bot_states.DELETE_PRODUCT: [CallbackQueryHandler(delete)],
             bot_states.CHECK_DELETE: [CallbackQueryHandler(check_delete)]
         },
         fallbacks = [CommandHandler('cancel', cancel)]
