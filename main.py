@@ -304,7 +304,7 @@ def check_show_menu(update, context):
         )
         return bot_states.CHECK_CLEAR
     else:
-        query.edit_message_text(f
+        query.edit_message_text(
             text = bot_messages.ask_amount_of_products
         )
         context.chat_data['data'] = data
