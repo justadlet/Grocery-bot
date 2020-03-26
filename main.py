@@ -209,9 +209,7 @@ def show_user_products(user_id):
 
 def feedback(update, context):
     user_id = update.effective_user.id
-    print("In feedback()")
     if not context.args:
-        print("In if context.args")
         send_message(context, user_id, bot_messages.feedback_write_text)
         return bot_states.READ_FEEDBACK
     text = context.args[0]
@@ -228,12 +226,10 @@ def feedback(update, context):
     return ConversationHandler.END
 
 def read_feedback(update, context):
-    print("In read_feedback()1")
     text = update.message.text
     user_id = update.effective_user.id
     username = update.message.from_user.username
     text =  "❗️Хей, пользоветель бота отправил новый фидбэк всем админам: ❗️\n\nFeedback:\n" + text + "\n\nUsername: @" + str(username) + "\n\nUser ID: " + str(user_id)
-    print("In read_feedback()2")
     for admin_id in LIST_OF_ADMINS:
         send_message(context, admin_id, text)
     send_message(context, user_id, bot_messages.feedback_success_command_response)
@@ -388,7 +384,7 @@ def unknown(update, context):
     context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.unknown_command_response, reply_markup = reply_markup)
 
 def cancel(update, context):
-    context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.cancelled_successfully, reply_markup = reply_markup)
+    send_message(context, update.effective_user.id,, bot_messages.cancelled_successfully)
     return ConversationHandler.END
 
 def main():
