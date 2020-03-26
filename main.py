@@ -209,9 +209,12 @@ def show_user_products(user_id):
 def show_menu(update, context):
     user_id = update.message.chat_id
     user_products = int(sql_number_of_products(user_id))
-    send_message(context, user_id, user_products)
     reply_keyboard = get_base_inline_keyboard()
     reply_text = str(bot_messages.show_menu_text) + "\n\n"
+    if user_products > 0:
+        reply_text += bot_messages.show_products_command_response
+    else:
+        reply_text += bot_messages.products_empty_response
     send_message_keyboard(context, user_id, reply_text, reply_keyboard)
     return bot_states.CHECK_MENU
 
