@@ -258,6 +258,7 @@ def check_clear(update, context):
     return bot_states.CHECK_MENU
 
 def show_menu(update, context):
+    print("In show_menu()")
     user_id = update.effective_user.id
     reply_keyboard = get_base_inline_keyboard()
     reply_text = get_menu_text(user_id)
