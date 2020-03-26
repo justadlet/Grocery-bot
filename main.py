@@ -212,8 +212,10 @@ def show_menu(update, context):
     reply_keyboard = get_base_inline_keyboard()
     reply_text = str(bot_messages.show_menu_text) + "\n\n"
     if user_products > 0:
+        send_message(context, user_id, bot_messages.show_products_command_response)
         reply_text += bot_messages.show_products_command_response
     else:
+        send_message(context, user_id, bot_messages.products_empty_response)
         reply_text += bot_messages.products_empty_response
     send_message_keyboard(context, user_id, reply_text, reply_keyboard)
     return bot_states.CHECK_MENU
