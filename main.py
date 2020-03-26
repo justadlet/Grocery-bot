@@ -78,9 +78,8 @@ def sql_get_products(user_id):
 
 ### Functions
 
-def get_id(context, update):
-    id = update.message.from_user.id
-    return id
+def add_to_database(user_id, amount, product_id):
+    sql_insert(connection, user_id, amount, product_id)
 
 def log_text(debug_text):
   print(debug_text)
@@ -96,33 +95,6 @@ def send_message_keyboard(context, chat_id, text, kbrd):
         context.bot.send_message(chat_id = chat_id, text = text, parse_mode = "Markdown", reply_markup = kbrd)
     except:
         log_text('No such chat_id using a bot (kbrd)')
-
-def feedback(update, context):
-    if not context.args:
-        context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.feedback_write_text,  reply_markup = reply_markup)
-        return bot_states.READ_FEEDBACK
-    text = context.args[0]
-    ith = 0
-    for word in context.args:
-        ith = ith + 1
-        if ith > 1:
-            text = text + " " + word
-    user_id = get_id(context, update)
-    username = update.message.from_user.username
-    text = "❗️Хей, пользоветель бота отправил новый фидбэк всем админам: ❗️\n\nFeedback:\n" + text + "\n\n______________________________\nUsername: @" + str(username) + "\n\nUser ID: " + str(user_id)
-    for admin_id in LIST_OF_ADMINS:
-        context.bot.send_message(chat_id = admin_id, text = text)
-    context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.feedback_success_command_response, reply_markup = reply_markup)
-
-def read_feedback(update, context):
-    text = update.message.text
-    user_id = get_id(context, update)
-    username = update.message.from_user.username
-    text =  "❗️Хей, пользоветель бота отправил новый фидбэк всем админам: ❗️\n\nFeedback:\n" + text + "\n\nUsername: @" + str(username) + "\n\nUser ID: " + str(user_id)
-    for admin_id in LIST_OF_ADMINS:
-        context.bot.send_message(chat_id = admin_id, text = text)
-    context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.feedback_success_command_response, reply_markup = reply_markup)
-    return ConversationHandler.END
 
 def get_base_inline_keyboard():
     keyboard = [
@@ -183,6 +155,77 @@ def get_menu_text(user_id):
         reply_text += bot_messages.products_empty_response
     return reply_text
 
+def get_product_list(user_id):
+    ith = 0
+    text = ""
+    whole_price = 0
+    products = sql_get_products(user_id)
+    for i in products:
+        ith = ith + 1
+        decrypted_product = ""
+        encrypted = i[0]
+        if i[0][0] == 'v':
+            x = int(encrypted[1:]) - 1
+            decrypted_product = menu.vegetables[x][0] + ": " + str(i[1]) + " * " + str(menu.vegetables[x][1]) + "тг"
+            whole_price += int(menu.vegetables[x][1]) * int(i[1])
+        elif i[0][0] == 'f':
+            x = int(encrypted[1:]) - 1
+            decrypted_product = menu.fruits[x][0] + ": " + str(i[1]) + " * " + str(menu.vegetables[x][1]) + "тг"
+            whole_price += int(menu.fruits[x][1]) * int(i[1])
+        elif i[0][0] == 'm':
+            x = int(encrypted[1:]) - 1
+            decrypted_product = menu.meals[x][0] + ": " + str(i[1]) + " * " + str(menu.vegetables[x][1]) + "тг"
+            whole_price += int(menu.meals[x][1]) * int(i[1])
+        elif i[0][0] == 'd':
+            x = int(encrypted[1:]) - 1
+            decrypted_product = menu.derinks[x][0] + ": " + str(i[1]) + " * " + str(menu.vegetables[x][1]) + "тг"
+            whole_price += int(menu.derinks[x][1]) * int(i[1])
+        text = text + str(ith) + ". " + decrypted_product + "\n"
+    text = text + "\nИтого: " + str(whole_price) + "тг"
+    return text
+
+def show_user_products(user_id):
+    user_tasks = sql_number_of_products(user_id)
+    reply_text = ""
+    if user_tasks > 0:
+        reply_text = bot_messages.show_products_command_response + str(get_product_list(user_id))
+    else:
+        reply_text = bot_messages.products_empty_response
+    return reply_text
+
+### Update Functions
+
+def feedback(update, context):
+    if not context.args:
+        context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.feedback_write_text,  reply_markup = reply_markup)
+        return bot_states.READ_FEEDBACK
+    text = context.args[0]
+    ith = 0
+    for word in context.args:
+        ith = ith + 1
+        if ith > 1:
+            text = text + " " + word
+    user_id = get_id(context, update)
+    username = update.message.from_user.username
+    text = "❗️Хей, пользоветель бота отправил новый фидбэк всем админам: ❗️\n\nFeedback:\n" + text + "\n\n______________________________\nUsername: @" + str(username) + "\n\nUser ID: " + str(user_id)
+    for admin_id in LIST_OF_ADMINS:
+        context.bot.send_message(chat_id = admin_id, text = text)
+    context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.feedback_success_command_response, reply_markup = reply_markup)
+
+def read_feedback(update, context):
+    text = update.message.text
+    user_id = get_id(context, update)
+    username = update.message.from_user.username
+    text =  "❗️Хей, пользоветель бота отправил новый фидбэк всем админам: ❗️\n\nFeedback:\n" + text + "\n\nUsername: @" + str(username) + "\n\nUser ID: " + str(user_id)
+    for admin_id in LIST_OF_ADMINS:
+        context.bot.send_message(chat_id = admin_id, text = text)
+    context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.feedback_success_command_response, reply_markup = reply_markup)
+    return ConversationHandler.END
+
+def get_id(context, update):
+    id = update.message.from_user.id
+    return id
+
 def clear(update, context):
     keyboard = [
         InlineKeyboardButton("Да", callback_data = '1'),
@@ -205,15 +248,6 @@ def check_clear(update, context):
     else:
         query.edit_message_text(text = "Окей 😉")
     return ConversationHandler.END
-
-def show_user_products(user_id):
-    user_tasks = sql_number_of_products(user_id)
-    reply_text = ""
-    if user_tasks > 0:
-        reply_text = bot_messages.show_products_command_response + str(get_product_list(user_id))
-    else:
-        reply_text = bot_messages.products_empty_response
-    return reply_text
 
 def show_menu(update, context):
     user_id = update.message.chat_id
@@ -274,9 +308,6 @@ def read_user_info(update, context):
     context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.order_sent_command_response, reply_markup = reply_markup)
     return ConversationHandler.END
 
-def add_to_database(user_id, amount, product_id):
-    sql_insert(connection, user_id, amount, product_id)
-
 def check_product_amount(update, context):
     user_id = get_id(context, update)
     try:
@@ -285,40 +316,11 @@ def check_product_amount(update, context):
         add_to_database(user_id, amount, data)
         reply_keyboard = get_base_inline_keyboard()
         reply_text = get_menu_text(user_id)
-        send_message_keyboard(context, user_id, reply_text, reply_keyboard)
+        context.bot.send_message(chat_id = user_id, text = reply_text, reply_markup = reply_keyboard)
         return bot_states.CHECK_MENU
     except (IndexError, ValueError):
         send_message(context, user_id, bot_messages.amount_is_not_number)
     return ConversationHandler.END
-
-def get_product_list(user_id):
-    ith = 0
-    text = ""
-    whole_price = 0
-    products = sql_get_products(user_id)
-    for i in products:
-        ith = ith + 1
-        decrypted_product = ""
-        encrypted = i[0]
-        if i[0][0] == 'v':
-            x = int(encrypted[1:]) - 1
-            decrypted_product = menu.vegetables[x][0] + ": " + str(i[1]) + " * " + str(menu.vegetables[x][1]) + "тг"
-            whole_price += int(menu.vegetables[x][1]) * int(i[1])
-        elif i[0][0] == 'f':
-            x = int(encrypted[1:]) - 1
-            decrypted_product = menu.fruits[x][0] + ": " + str(i[1]) + " * " + str(menu.vegetables[x][1]) + "тг"
-            whole_price += int(menu.fruits[x][1]) * int(i[1])
-        elif i[0][0] == 'm':
-            x = int(encrypted[1:]) - 1
-            decrypted_product = menu.meals[x][0] + ": " + str(i[1]) + " * " + str(menu.vegetables[x][1]) + "тг"
-            whole_price += int(menu.meals[x][1]) * int(i[1])
-        elif i[0][0] == 'd':
-            x = int(encrypted[1:]) - 1
-            decrypted_product = menu.derinks[x][0] + ": " + str(i[1]) + " * " + str(menu.vegetables[x][1]) + "тг"
-            whole_price += int(menu.derinks[x][1]) * int(i[1])
-        text = text + str(ith) + ". " + decrypted_product + "\n"
-    text = text + "\nИтого: " + str(whole_price) + "тг"
-    return text
 
 def start(update, context):
     context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.start_command_response, reply_markup = reply_markup)
