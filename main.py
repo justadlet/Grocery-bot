@@ -214,7 +214,7 @@ def show_menu(update, context):
     reply_text += show_user_products(user_id)
     print("in show_menu2")
     print(reply_text)
-    send_message_keyboard(context, user_id, reply_text, reply_keyboard)
+    send_message_keyboard(context, user_id, show_user_products(user_id), reply_keyboard)
     print("in show_menu3")
     return bot_states.CHECK_MENU
 
