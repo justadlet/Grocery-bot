@@ -172,10 +172,8 @@ def get_product_list(user_id):
     text = ""
     whole_price = 0
     products = sql_get_products(user_id)
-    print ("Hi in get_product_list()")
     for i in products:
         ith = ith + 1
-        print(str(ith) + " " + str(i[0]) + ", " + str(i[1]) + "\n")
         decrypted_product = ""
         encrypted = i[0]
         if i[0][0] == 'v':
@@ -192,10 +190,6 @@ def get_product_list(user_id):
             whole_price += int(menu.meals[x][1]) * int(i[1])
         elif i[0][0] == 'd':
             x = int(encrypted[1:]) - 1
-            print("Hi in d")
-            print(x)
-            print(encrypted)
-            print("\n")
             decrypted_product = menu.derinks[x][0] + ": " + str(i[1]) + " * " + str(menu.derinks[x][1]) + "тг = " + str(int(i[1] * menu.derinks[x][1])) + "тг"  
             whole_price += int(menu.derinks[x][1]) * int(i[1])
         text = text + str(ith) + ". " + decrypted_product + "\n"
@@ -263,7 +257,6 @@ def check_clear(update, context):
     return bot_states.CHECK_MENU
 
 def show_menu(update, context):
-    print("In show_menu()")
     user_id = update.effective_user.id
     reply_keyboard = get_base_inline_keyboard()
     reply_text = get_menu_text(user_id)
@@ -325,10 +318,9 @@ def check_show_menu(update, context):
 
 def read_user_info(update, context):
     user_info = update.message.text
-    print(user_info)
     user_id = update.effective_user.id
     username = update.message.from_user.username
-    text =  "❗️Новый заказ от клиента❗️\n\n**ФИО, Адрес и номер телефона:**\n" + user_info + "\n\nUsername: @" + str(username) + "\n\nUser ID: " + str(user_id) + "\n\nЗаказ клиента: \n" + get_product_list(user_id)
+    text =  "❗️Новый заказ от клиента❗️\n\nФИО, Адрес и номер телефона:\n" + user_info + "\n\nUsername: @" + str(username) + "\n\nUser ID: " + str(user_id) + "\n\nЗаказ клиента: \n" + get_product_list(user_id)
     for admin_id in LIST_OF_ADMINS:
         context.bot.send_message(chat_id = admin_id, text = text)
     sql_clear(user_id)
@@ -356,9 +348,6 @@ def delete(update, context):
     for i in products:
         decrypted_product = ""
         encrypted = i[0]
-        print(i[0])
-        print(i[1])
-        
         if i[0][0] == 'v':
             x = int(encrypted[1:]) - 1
             decrypted_product = menu.vegetables[x][0] + ": " + str(i[1]) + " * " + str(menu.vegetables[x][1]) + "тг = " + str(int(i[1] * menu.vegetables[x][1])) + "тг"  
