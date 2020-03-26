@@ -210,7 +210,8 @@ def show_menu(update, context):
     user_id = update.message.chat_id
     reply_keyboard = get_base_inline_keyboard()
     print("in show_menu1")
-    reply_text = str(bot_messages.show_menu_text) + "\n\n" + str(show_user_products(user_id))
+    reply_text = str(bot_messages.show_menu_text) + "\n\n"
+    # reply_text = reply_text + str(show_user_products(user_id))
     print("in show_menu2")
     print(reply_text)
     send_message_keyboard(context, user_id, reply_text, reply_keyboard)
