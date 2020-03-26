@@ -284,6 +284,7 @@ def check_show_menu(update, context):
                 text = "❗️Перед тем как отправить ваш заказ, пополните пожалуйста вашу корзину.\n\n" + str(get_menu_text(user_id)),
                 reply_markup = get_base_inline_keyboard()
             )
+            return bot_states.CHECK_MENU
         else:
             send_message(context, update.effective_user.id, "Хорошо, отправьте пожалуйста ФИО, Адрес и ваш номер телефона через пробел для того чтобы мы связались с вами.")
         return bot_states.READ_USER_INFO
@@ -367,7 +368,6 @@ def check_delete(update, context):
     user_id = update.effective_user.id
     query = update.callback_query
     data = query.data
-    send_message(context, user_id, data)
     sql_delete(user_id, data)
     query.edit_message_text (
         text = "❗Данный продукт был успешно удален!\n\n" + get_menu_text(user_id),
