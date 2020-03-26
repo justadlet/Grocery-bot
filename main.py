@@ -220,7 +220,7 @@ def show_menu(update, context):
         print(2)
         context.bot.send_message(chat_id = user_id, text = "Извините, но ваша корзина пуста!\nИспользуйте /show_menu чтобы набрать продукты в корзину", reply_markup = reply_markup)
         reply_text += "Извините, но ваша корзина пуста!\nИспользуйте /show_menu чтобы набрать продукты в корзину"
-    send_message_keyboard(context, user_id, reply_text, reply_keyboard)
+    context.bot.send_message(chat_id = user_id, text = reply_text, reply_markup = reply_keyboard)
     return bot_states.CHECK_MENU
 
 def check_show_menu(update, context):
