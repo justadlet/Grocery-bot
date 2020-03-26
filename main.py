@@ -243,13 +243,13 @@ def check_clear(update, context):
     user_id = update.effective_user.id
     reply_keyboard = get_base_inline_keyboard()
     user_tasks = sql_number_of_products(user_id)
-    reply_text = get_menu_text(user_id)
     if query.data == '1':
         if user_tasks > 0:
             sql_clear(user_id)
-        reply_text = "❗️Ваша корзина🧺 успешно очищена.\n\n" + reply_text
+        reply_text = "❗️Ваша корзина🧺 успешно очищена.\n\n"
     else:
-        reply_text = "❗️Вы успешно отменили очистку корзины🧺.\n\n" + reply_text
+        reply_text = "❗️Вы успешно отменили очистку корзины🧺.\n\n"
+    reply_text += get_menu_text(user_id)
     query.edit_message_text(
         text = reply_text,
         reply_markup = reply_keyboard
@@ -257,6 +257,7 @@ def check_clear(update, context):
     return bot_states.CHECK_MENU
 
 def show_menu(update, context):
+    print("In show menu")
     user_id = update.effective_user.id
     reply_keyboard = get_base_inline_keyboard()
     reply_text = get_menu_text(user_id)
