@@ -208,9 +208,10 @@ def show_user_products(user_id):
 ### Update Functions
 
 def feedback(update, context):
+    user_id = update.effective_user.id
     print("In feedback()")
     if not context.args:
-        context.bot.send_message(chat_id = update.effective_user.chat_id, text = bot_messages.feedback_write_text,  reply_markup = reply_markup)
+        context.bot.send_message(chat_id = user_id, text = bot_messages.feedback_write_text,  reply_markup = reply_markup)
         return bot_states.READ_FEEDBACK
     text = context.args[0]
     ith = 0
@@ -218,7 +219,6 @@ def feedback(update, context):
         ith = ith + 1
         if ith > 1:
             text = text + " " + word
-    user_id = update.effective_user.id
     username = update.message.from_user.username
     text = "❗️Хей, пользоветель бота отправил новый фидбэк всем админам: ❗️\n\nFeedback:\n" + text + "\n\n______________________________\nUsername: @" + str(username) + "\n\nUser ID: " + str(user_id)
     for admin_id in LIST_OF_ADMINS:
