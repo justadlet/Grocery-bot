@@ -196,7 +196,8 @@ def check_clear(update, context):
 def show_menu(update, context):
     user_id = update.effective_user.id
     reply_keyboard = get_base_inline_keyboard()
-    send_message_keyboard(context, user_id, bot_messages.show_menu_text, reply_keyboard)
+    reply_text = bot_messages.show_menu_text + "\n" + show_user_products(user_id)
+    send_message_keyboard(context, user_id, reply_text, reply_keyboard)
     return bot_states.CHECK_MENU
 
 def check_show_menu(update, context):
@@ -304,7 +305,7 @@ def show_user_products(update, context):
         reply_text = bot_messages.show_products_command_response + get_product_list(user_id)
     else:
         reply_text = bot_messages.products_empty_response
-    context.bot.send_message(chat_id = update.message.chat_id, text = reply_text, reply_markup = reply_markup)
+    return reply_text
 
 # def show_tasks(update, context):
 #     user_id = update.message.from_user.id
@@ -337,7 +338,6 @@ def main():
     feedback_handler = CommandHandler('feedback', feedback, pass_args = True, pass_chat_data = True)
     start_handler = CommandHandler('start', start)
     help_handler = CommandHandler('help', help)
-    show_user_products_handler = CommandHandler('show_products', show_user_products)
     show_menu_conv_handler = ConversationHandler(
         entry_points = [CommandHandler('show_menu', show_menu)],
         states = {
@@ -368,7 +368,6 @@ def main():
     dp.add_handler(feedback_handler)
     dp.add_handler(start_handler)
     dp.add_handler(help_handler)
-    dp.add_handler(show_user_products_handler)
     dp.add_handler(feedback_conv_handler)
     dp.add_handler(unknown_handler)
 
