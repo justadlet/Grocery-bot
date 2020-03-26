@@ -209,21 +209,8 @@ def show_user_products(user_id):
 
 def feedback(update, context):
     user_id = update.effective_user.id
-    if not context.args:
-        send_message(context, user_id, bot_messages.feedback_write_text)
-        return bot_states.READ_FEEDBACK
-    text = context.args[0]
-    ith = 0
-    for word in context.args:
-        ith = ith + 1
-        if ith > 1:
-            text = text + " " + word
-    username = update.message.from_user.username
-    text = "❗️Хей, пользоветель бота отправил новый фидбэк всем админам: ❗️\n\nFeedback:\n" + text + "\n\n______________________________\nUsername: @" + str(username) + "\n\nUser ID: " + str(user_id)
-    for admin_id in LIST_OF_ADMINS:
-        context.bot.send_message(chat_id = admin_id, text = text)
-    context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.feedback_success_command_response, reply_markup = reply_markup)
-    return ConversationHandler.END
+    send_message(context, user_id, bot_messages.feedback_write_text)
+    return bot_states.READ_FEEDBACK
 
 def read_feedback(update, context):
     text = update.message.text
@@ -401,7 +388,7 @@ def main():
     start_handler = CommandHandler('start', start)
     help_handler = PrefixHandler('ℹ️', 'Помощь', help)
     show_menu_conv_handler = ConversationHandler(
-        entry_points = [PrefixHandler('📋', "Show the menu", show_menu)],
+        entry_points = [PrefixHandler('📋', 'Show the menu', show_menu)],
         states = {
             bot_states.CHECK_MENU: [CallbackQueryHandler(check_show_menu)],
             bot_states.CHECK_PRODUCT_AMOUNT: [MessageHandler(Filters.text, check_product_amount)],
@@ -412,7 +399,7 @@ def main():
         fallbacks = [RegexHandler('[/]*', done)]
     )
     feedback_conv_handler = ConversationHandler(
-        entry_points = [PrefixHandler('✍🏻', "Написать отзыв", feedback, pass_args = True, pass_chat_data = True)],
+        entry_points = [PrefixHandler('✍🏻', 'Написать отзыв', feedback)],
         states = {
             bot_states.READ_FEEDBACK: [MessageHandler(Filters.text, read_feedback)]
         },
