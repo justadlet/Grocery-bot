@@ -249,6 +249,7 @@ def show_menu(update, context):
 
 def check_show_menu(update, context):
     query = update.callback_query
+    user_id = update.effective_user.id
     data = query.data
     current_text = update.effective_message.text
     if data == "vegetables":
@@ -277,11 +278,17 @@ def check_show_menu(update, context):
             reply_markup = get_base_inline_keyboard()
         )
     elif data == "order":
-        send_message(context, update.effective_user.id, "Хорошо, отправьте пожалуйста ФИО, Адрес и ваш номер телефона через пробел для того чтобы мы связались с вами.")
+        user_products = sql_number_of_products(user_id)
+        if user_products == 0:
+            query.edit_message_text(
+                text = "❗️Перед тем как отправить ваш заказ, пополните пожалуйста вашу корзину.\n\n" + str(get_menu_text(user_id)),
+                reply_markup = get_base_inline_keyboard()
+            )
+        else:
+            send_message(context, update.effective_user.id, "Хорошо, отправьте пожалуйста ФИО, Адрес и ваш номер телефона через пробел для того чтобы мы связались с вами.")
         return bot_states.READ_USER_INFO
     elif data == "delete":
         reply_keyboard = []
-        user_id = update.effective_user.id
         user_tasks = sql_number_of_products(user_id)
         if user_tasks == 0:
             query.edit_message_text(
