@@ -244,7 +244,7 @@ def show_menu(update, context):
     user_id = update.effective_user.id
     reply_keyboard = get_base_inline_keyboard()
     reply_text = get_menu_text(user_id)
-    context.bot.send_message(chat_id = user_id, text = reply_text, reply_markup = reply_keyboard)
+    send_message_keyboard(context, user_id, reply_text, reply_keyboard)
     return bot_states.CHECK_MENU
 
 def check_show_menu(update, context):
@@ -345,9 +345,9 @@ def read_user_info(update, context):
     username = update.message.from_user.username
     text =  "❗️Новый заказ от клиента❗️\n\nФИО, Адрес и номер телефона:\n" + user_info + "\n\nUsername: @" + str(username) + "\n\nUser ID: " + str(user_id) + "\n\nЗаказ клиента: \n" + get_product_list(user_id)
     for admin_id in LIST_OF_ADMINS:
-        context.bot.send_message(chat_id = admin_id, text = text)
+        send_message(context, admin_id, text)
     sql_clear(user_id)
-    context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.order_sent_command_response, parse_mode = "Markdown", reply_markup = reply_markup)
+    send_message(context, user_id, bot_messages.order_sent_command_response)
     return ConversationHandler.END
 
 def check_product_amount(update, context):
@@ -358,7 +358,7 @@ def check_product_amount(update, context):
         add_to_database(user_id, amount, data)
         reply_keyboard = get_base_inline_keyboard()
         reply_text = get_menu_text(user_id)
-        context.bot.send_message(chat_id = user_id, text = reply_text, reply_markup = reply_keyboard)
+        send_message_keyboard(context, user_id, reply_text, reply_keyboard)
         return bot_states.CHECK_MENU
     except (IndexError, ValueError):
         send_message(context, user_id, bot_messages.amount_is_not_number)
