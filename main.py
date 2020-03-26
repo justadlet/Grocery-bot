@@ -215,11 +215,11 @@ def show_menu(update, context):
     if user_products > 0:
         print(1)
         send_message(context, user_id, "Извините, но ваша корзина пуста!Используйте /show_menu чтобы набрать продукты в корзину")
-        reply_text += "Извините, но ваша корзина пуста!Используйте /show_menu чтобы набрать продукты в корзину"
+        reply_text += bot_messages.show_products_command_response
     else:
         print(2)
         context.bot.send_message(chat_id = user_id, text = "Извините, но ваша корзина пуста!\nИспользуйте /show_menu чтобы набрать продукты в корзину", reply_markup = reply_markup)
-        reply_text += "Извините, но ваша корзина пуста!\nИспользуйте /show_menu чтобы набрать продукты в корзину"
+        reply_text += bot_messages.products_empty_response
     context.bot.send_message(chat_id = user_id, text = reply_text, reply_markup = reply_keyboard)
     return bot_states.CHECK_MENU
 
