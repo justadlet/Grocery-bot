@@ -21,7 +21,7 @@ logging.basicConfig(format = '%(asctime)s - %(name)s - %(levelname)s - %(message
                      
 logger = logging.getLogger(__name__)
 LIST_OF_ADMINS = [251961384, 771840280]
-custom_keyboard = [['/show_menu', '/show_products'],
+custom_keyboard = [['/show_menu'],
                    ['/start', '/cancel'],
                    ['/help', '/clear'],
                    ['/feedback']]
@@ -301,11 +301,11 @@ def read_user_info(update, context):
     print(user_info)
     user_id = get_id(context, update)
     username = update.message.from_user.username
-    text =  "❗️Новый заказ от клиента❗️\n\nФИО, Адрес и номер телефона:\n" + user_info + "\n\nUsername: @" + str(username) + "\n\nUser ID: " + str(user_id) + "\n\nЗаказ клиента: \n" + get_product_list(user_id)
+    text =  "❗️Новый заказ от клиента❗️\n\n**ФИО, Адрес и номер телефона:**\n" + user_info + "\n\nUsername: @" + str(username) + "\n\nUser ID: " + str(user_id) + "\n\nЗаказ клиента: \n" + get_product_list(user_id)
     for admin_id in LIST_OF_ADMINS:
         context.bot.send_message(chat_id = admin_id, text = text)
     sql_clear(user_id)
-    context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.order_sent_command_response, reply_markup = reply_markup)
+    context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.order_sent_command_response, parse_mode = "Markdown", reply_markup = reply_markup)
     return ConversationHandler.END
 
 def check_product_amount(update, context):
