@@ -5,7 +5,7 @@ import time
 import os
 
 from datetime import datetime
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, InlineQueryHandler, ConversationHandler, CallbackQueryHandler, CallbackContext
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, InlineQueryHandler, ConversationHandler, CallbackQueryHandler, CallbackContext, RegexHandler
 from telegram import InlineQueryResultArticle, InputTextMessageContent, ReplyKeyboardMarkup, ReplyKeyboardRemove, InlineKeyboardButton, InlineKeyboardMarkup
 from config import bot_messages, bot_states, menu
 from functools import wraps
@@ -407,14 +407,14 @@ def main():
             bot_states.CHECK_CLEAR: [CallbackQueryHandler(check_clear)],
             bot_states.CHECK_DELETE: [CallbackQueryHandler(check_delete)]
         },
-        fallbacks = [CommandHandler('cancel', cancel)]
+        fallbacks = [RegexHandler('[/]*', cancel)]
     )
     feedback_conv_handler = ConversationHandler(
         entry_points = [CommandHandler('feedback', feedback, pass_args = True, pass_chat_data = True)],
         states = {
             bot_states.READ_FEEDBACK: [MessageHandler(Filters.text, read_feedback)]
         },
-        fallbacks = [CommandHandler('cancel', cancel)]
+        fallbacks = [RegexHandler('[/]*', cancel)]
     )
     unknown_handler = MessageHandler(Filters.command, unknown)
 
