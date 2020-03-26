@@ -198,13 +198,13 @@ def check_clear(update, context):
     return ConversationHandler.END
 
 def show_menu(update, context):
-    user_id = update.message.from_user.id
+    user_id = update.message.chat_id
     reply_keyboard = get_base_inline_keyboard()
     print("in show_menu1")
-    reply_text = bot_messages.show_menu_text + "\n" + str(show_user_products(user_id))
+    reply_text = str(bot_messages.show_menu_text) + "\n" + str(show_user_products(user_id))
     print("in show_menu2")
     print(reply_text)
-    context.bot.send_message(chat_id = user_id, text = reply_text, parse_mode = "Markdown", reply_markup = reply_keyboard)
+    context.bot.send_message(chat_id = update.message.chat_id, text = reply_text, parse_mode = "Markdown", reply_markup = reply_keyboard)
     print("in show_menu3")
     return bot_states.CHECK_MENU
 
