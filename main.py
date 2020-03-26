@@ -295,6 +295,12 @@ def check_show_menu(update, context):
     elif data == "delete":
         reply_keyboard = []
         user_id = update.effective_user.id
+        user_tasks = sql_number_of_products(user_id)
+        if user_tasks == 0:
+            query.edit_message_text(
+                text = "❗️Ваша корзина🧺 уже пуста.\n\n" + str(get_menu_text(user_id)),
+                reply_markup = get_base_inline_keyboard()
+            )
         query = update.callback_query
         products = sql_get_products(user_id)
         for i in products:
