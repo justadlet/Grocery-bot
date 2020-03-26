@@ -240,6 +240,10 @@ def read_feedback(update, context):
     context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.feedback_success_command_response, reply_markup = reply_markup)
     return ConversationHandler.END
 
+def clr(update, context):
+    user_id = update.effective_user.id
+    sql_delete(user_id)
+
 def check_clear(update, context):
     query = update.callback_query
     user_id = update.effective_user.id
@@ -380,7 +384,7 @@ def check_delete(update, context):
         text = "❗Данный продукт был успешно удален!\n\n" + get_menu_text(user_id),
         reply_markup = get_base_inline_keyboard()
     )
-    return bot_states.END
+    return bot_states.CHECK_MENU
 
 def start(update, context):
     context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.start_command_response, reply_markup = reply_markup)
@@ -403,6 +407,7 @@ def main():
     feedback_handler = CommandHandler('feedback', feedback, pass_args = True, pass_chat_data = True)
     start_handler = CommandHandler('start', start)
     help_handler = CommandHandler('help', help)
+    clr_handler = CommandHandler('clr', clr)
     show_menu_conv_handler = ConversationHandler(
         entry_points = [CommandHandler('show_menu', show_menu)],
         states = {
@@ -424,6 +429,7 @@ def main():
     )
     unknown_handler = MessageHandler(Filters.command, unknown)
 
+    dp.add_handler(clr_handler)
     dp.add_handler(show_menu_conv_handler)
     dp.add_handler(feedback_handler)
     dp.add_handler(start_handler)
