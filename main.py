@@ -172,6 +172,7 @@ def get_product_list(user_id):
     text = ""
     whole_price = 0
     products = sql_get_products(user_id)
+    print ("Hi in get_product_list()")
     for i in products:
         ith = ith + 1
         decrypted_product = ""
