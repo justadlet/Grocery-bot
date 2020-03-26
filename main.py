@@ -242,7 +242,7 @@ def read_feedback(update, context):
 
 def clr(update, context):
     user_id = update.effective_user.id
-    sql_delete(user_id)
+    sql_delete(user_id, "delete")
 
 def check_clear(update, context):
     query = update.callback_query
