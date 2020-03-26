@@ -228,11 +228,12 @@ def feedback(update, context):
     return ConversationHandler.END
 
 def read_feedback(update, context):
+    print("In read_feedback()1")
     text = update.message.text
     user_id = update.effective_user.id
     username = update.message.from_user.username
     text =  "❗️Хей, пользоветель бота отправил новый фидбэк всем админам: ❗️\n\nFeedback:\n" + text + "\n\nUsername: @" + str(username) + "\n\nUser ID: " + str(user_id)
-    print("In read_feedback()")
+    print("In read_feedback()2")
     for admin_id in LIST_OF_ADMINS:
         send_message(context, admin_id, text)
     send_message(context, user_id, bot_messages.feedback_success_command_response)
