@@ -95,7 +95,7 @@ def send_message_keyboard(context, chat_id, text, kbrd):
     try:
         context.bot.send_message(chat_id = chat_id, text = text, parse_mode = "Markdown", reply_markup = kbrd)
     except:
-        log_text('No such chat_id using a bot')
+        log_text('No such chat_id using a bot (kbrd)')
 
 def feedback(update, context):
     if not context.args:
@@ -203,7 +203,7 @@ def show_menu(update, context):
     print("in show_menu1")
     reply_text = bot_messages.show_menu_text + "\n" + str(show_user_products(user_id))
     print("in show_menu2")
-    send_message_keyboard(context, user_id, reply_text, reply_keyboard)
+    context.bot.send_message(chat_id = user_id, text = reply_text, parse_mode = "Markdown", reply_markup = reply_keyboard)
     print("in show_menu3")
     return bot_states.CHECK_MENU
 
