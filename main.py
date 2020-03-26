@@ -110,6 +110,12 @@ def get_base_inline_keyboard():
         ],
         [
             InlineKeyboardButton("Отправить заказ администратору 🛎", callback_data = "order")
+        ],
+        [
+            InlineKeyboardButton("Удалить продукт 🗑", callback_data = "delete")
+        ],
+        [
+            InlineKeyboardButton("Очистить корзину 🧺", callback_data = "clear")
         ]
     ]
     return InlineKeyboardMarkup(keyboard)
@@ -226,28 +232,26 @@ def get_id(context, update):
     id = update.message.from_user.id
     return id
 
-def clear(update, context):
-    keyboard = [
-        InlineKeyboardButton("Да", callback_data = '1'),
-        InlineKeyboardButton("Нет", callback_data = '2')
-    ]
-    reply_keyboard = InlineKeyboardMarkup(build_menu(keyboard, n_cols = 1))
-    context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.clear_command_confirmation, reply_markup = reply_keyboard)    
-    return bot_states.CHECK_CLEAR
-
 def check_clear(update, context):
     query = update.callback_query
     user_id = get_id(context, update)
-    user_tasks = sql_number_of_products(user_id)
+    reply_keyboard = get_base_inline_keyboard()
+    reply_text = get_menu_text(user_id)
     if query.data == '1':
         if user_tasks > 0:
             sql_clear(user_id)
             query.edit_message_text(text = bot_messages.clear_successfully_command_response)
         else:
             query.edit_message_text(text = bot_messages.bucket_empty_command_response)
+        reply_text = "Ваша корзина🧺 успешно очищена.\n\n" + reply_text
     else:
         query.edit_message_text(text = "Окей 😉")
-    return ConversationHandler.END
+        reply_text = "Вы отменили очистку корзины🧺.\n\n" + reply_text
+    query.edit_message_text(
+        text = reply_text,
+        reply_markup = reply_keyboard
+    )
+    return bot_states.CHECK_MENU
 
 def show_menu(update, context):
     user_id = update.message.chat_id
@@ -288,8 +292,19 @@ def check_show_menu(update, context):
     elif data == "order":
         send_message(context, update.effective_user.id, "Хорошо, отправьте пожалуйста ФИО, Адрес и ваш номер телефона через пробел для того чтобы мы связались с вами.")
         return bot_states.READ_USER_INFO
-    else:
+    elif data == "clear":
+        keyboard = [
+            InlineKeyboardButton("Да", callback_data = '1'),
+            InlineKeyboardButton("Нет", callback_data = '2')
+        ]
+        reply_keyboard = InlineKeyboardMarkup(build_menu(keyboard, n_cols = 1))
         query.edit_message_text(
+            text = bot_messages.clear_command_confirmation,
+            reply_markup = reply_keyboard
+        )
+        return bot_states.CHECK_CLEAR
+    else:
+        query.edit_message_text(f
             text = bot_messages.ask_amount_of_products
         )
         context.chat_data['data'] = data
@@ -348,13 +363,7 @@ def main():
         states = {
             bot_states.CHECK_MENU: [CallbackQueryHandler(check_show_menu)],
             bot_states.CHECK_PRODUCT_AMOUNT: [MessageHandler(Filters.text, check_product_amount)],
-            bot_states.READ_USER_INFO: [MessageHandler(Filters.text, read_user_info)]
-        },
-        fallbacks = [CommandHandler('cancel', cancel)]
-    )
-    clear_conv_hnadler = ConversationHandler(
-        entry_points = [CommandHandler('clear', clear)],
-        states = {
+            bot_states.READ_USER_INFO: [MessageHandler(Filters.text, read_user_info)],
             bot_states.CHECK_CLEAR: [CallbackQueryHandler(check_clear)]
         },
         fallbacks = [CommandHandler('cancel', cancel)]
@@ -368,7 +377,6 @@ def main():
     )
     unknown_handler = MessageHandler(Filters.command, unknown)
 
-    dp.add_handler(clear_conv_hnadler)
     dp.add_handler(show_menu_conv_handler)
     dp.add_handler(feedback_handler)
     dp.add_handler(start_handler)
