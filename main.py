@@ -419,7 +419,6 @@ def main():
     unknown_handler = MessageHandler(Filters.command, unknown)
 
     dp.add_handler(show_menu_conv_handler)
-    dp.add_handler(feedback_handler)
     dp.add_handler(start_handler)
     dp.add_handler(help_handler)
     dp.add_handler(feedback_conv_handler)
