@@ -295,6 +295,7 @@ def check_show_menu(update, context):
                 text = "❗️Ваша корзина🧺 уже пуста.\n\n" + str(get_menu_text(user_id)),
                 reply_markup = get_base_inline_keyboard()
             )
+            return bot_states.CHECK_MENU
         query = update.callback_query
         products = sql_get_products(user_id)
         for i in products:
