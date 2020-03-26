@@ -343,6 +343,7 @@ def check_product_amount(update, context):
     return ConversationHandler.END
 
 def delete(update, context):
+    print("In delete()")
     reply_keyboard = []
     user_id = update.effective_user.id
     query = update.callback_query
@@ -365,7 +366,7 @@ def delete(update, context):
         reply_keyboard.append(InlineKeyboardButton(decrypted_product, callback_data = str(encrypted)))
     query.edit_message_text(
         text = "Хорошо, выберите продукт который вы хотите удалить из корзины🧺: ",
-        reply_markup = reply_keyboard
+        reply_markup = InlineKeyboardMarkup(build_menu(reply_keyboard, n_cols = 1))
     )
     return bot_states.CHECK_DELETE
 
