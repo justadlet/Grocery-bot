@@ -79,8 +79,8 @@ def sql_get_products(user_id):
 ### Functions
 
 def get_id(context, update):
-    id = update.message.chat_id
-    return id
+    idd = update.message.chat_id
+    return idd
 
 def add_to_database(user_id, amount, product_id):
     sql_insert(connection, user_id, amount, product_id)
