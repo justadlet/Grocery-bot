@@ -223,6 +223,7 @@ def feedback(update, context):
     for admin_id in LIST_OF_ADMINS:
         context.bot.send_message(chat_id = admin_id, text = text)
     context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.feedback_success_command_response, reply_markup = reply_markup)
+    return ConversationHandler.END
 
 def read_feedback(update, context):
     text = update.message.text
@@ -231,8 +232,8 @@ def read_feedback(update, context):
     text =  "❗️Хей, пользоветель бота отправил новый фидбэк всем админам: ❗️\n\nFeedback:\n" + text + "\n\nUsername: @" + str(username) + "\n\nUser ID: " + str(user_id)
     print("In read_feedback()")
     for admin_id in LIST_OF_ADMINS:
-        context.bot.send_message(chat_id = admin_id, text = text)
-    context.bot.send_message(chat_id = update.message.chat_id, text = bot_messages.feedback_success_command_response, reply_markup = reply_markup)
+        send_message(context, admin_id, text)
+    send_message(context, user_id, bot_messages.feedback_success_command_response)
     return ConversationHandler.END
 
 def check_clear(update, context):
@@ -254,7 +255,6 @@ def check_clear(update, context):
     return bot_states.CHECK_MENU
 
 def show_menu(update, context):
-    print("In show menu")
     user_id = update.effective_user.id
     reply_keyboard = get_base_inline_keyboard()
     reply_text = get_menu_text(user_id)
