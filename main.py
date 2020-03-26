@@ -174,6 +174,15 @@ def get_keyboard2(call_data):
     keyboard.append(InlineKeyboardButton("Назад", callback_data = "back"))
     return InlineKeyboardMarkup(build_menu(keyboard, n_cols = 1))
 
+def get_menu_text(user_id):
+    user_products = int(sql_number_of_products(user_id))
+    reply_text = str(bot_messages.show_menu_text) + "\n\n"
+    if user_products > 0:
+        reply_text += bot_messages.show_products_command_response + "\n" + str(get_product_list(user_id))
+    else:
+        reply_text += bot_messages.products_empty_response
+    return reply_text
+
 def clear(update, context):
     keyboard = [
         InlineKeyboardButton("Да", callback_data = '1'),
@@ -208,18 +217,8 @@ def show_user_products(user_id):
 
 def show_menu(update, context):
     user_id = update.message.chat_id
-    user_products = int(sql_number_of_products(user_id))
     reply_keyboard = get_base_inline_keyboard()
-    reply_text = str(bot_messages.show_menu_text) + "\n\n"
-    send_message(context, user_id, user_products)
-    if user_products > 0:
-        print(1)
-        send_message(context, user_id, "Извините, но ваша корзина пуста!Используйте /show_menu чтобы набрать продукты в корзину")
-        reply_text += bot_messages.show_products_command_response
-    else:
-        print(2)
-        context.bot.send_message(chat_id = user_id, text = "Извините, но ваша корзина пуста!\nИспользуйте /show_menu чтобы набрать продукты в корзину", reply_markup = reply_markup)
-        reply_text += bot_messages.products_empty_response
+    reply_text = get_menu_text(user_id)
     context.bot.send_message(chat_id = user_id, text = reply_text, reply_markup = reply_keyboard)
     return bot_states.CHECK_MENU
 
@@ -285,7 +284,8 @@ def check_product_amount(update, context):
         data = context.chat_data['data']
         add_to_database(user_id, amount, data)
         reply_keyboard = get_base_inline_keyboard()
-        send_message_keyboard(context, user_id, bot_messages.show_menu_text, reply_keyboard)
+        reply_text = get_menu_text(user_id)
+        send_message_keyboard(context, user_id, reply_text, reply_keyboard)
         return bot_states.CHECK_MENU
     except (IndexError, ValueError):
         send_message(context, user_id, bot_messages.amount_is_not_number)
