@@ -286,8 +286,8 @@ def check_show_menu(update, context):
             )
             return bot_states.CHECK_MENU
         else:
-            send_message(context, update.effective_user.id, "Хорошо, отправьте пожалуйста ФИО, Адрес и ваш номер телефона через пробел для того чтобы мы связались с вами.")
-        return bot_states.READ_USER_INFO
+            send_message(context, update.effective_user.id, "Хорошо, отправьте пожалуйста ваше ФИО.")
+        return bot_states.READ_USER_NAME
     elif data == "delete":
         reply_keyboard = []
         user_tasks = sql_number_of_products(user_id)
@@ -339,11 +339,27 @@ def check_show_menu(update, context):
         return bot_states.CHECK_PRODUCT_AMOUNT
     return bot_states.CHECK_MENU
 
-def read_user_info(update, context):
-    user_info = update.message.text
+def read_user_name(update, context):
+    user_name = update.message.text
+    context.user_data['Name'] = user_name
+    user_id = update.effective_user.id
+    send_message(context, user_id, "Спасибо, теперь для доставки продуктов мне нужен ваш адрес 📍")
+    return bot_states.READ_USER_ADDRESS
+
+def read_user_address(update, context):
+    user_address = update.message.text
+    context.user_data['Address'] = user_address
+    user_id = update.effective_user_id
+    send_message(context, user_id, "Прекрасно, осталось ввести ваш номер телефона 📱 и я отправлю ваш заказ администраторам.")
+    return bot_states.READ_USER_PHONE
+
+def read_user_phone(update, context):
+    user_phone = update.message.text
+    user_name = context.user_data['Name']
+    user_address = context.user_data['Address']
     user_id = update.effective_user.id
     username = update.message.from_user.username
-    text =  "❗️Новый заказ от клиента❗️\n\nФИО, Адрес и номер телефона:\n" + user_info + "\n\nUsername: @" + str(username) + "\n\nUser ID: " + str(user_id) + "\n\nЗаказ клиента: \n" + get_product_list(user_id)
+    text =  "❗️Новый заказ от клиента❗️\n\nФИО: " + str(user_name) + "\nАдрес: " + str(user_address) + "\nНомер телефона: " + str(user_phone) + "\nUsername: @" + str(username) + "\nUser ID: " + str(user_id) + "\n\nЗаказ клиента: \n" + get_product_list(user_id)
     for admin_id in LIST_OF_ADMINS:
         send_message(context, admin_id, text)
     sql_clear(user_id)
@@ -400,7 +416,9 @@ def main():
         states = {
             bot_states.CHECK_MENU: [CallbackQueryHandler(check_show_menu)],
             bot_states.CHECK_PRODUCT_AMOUNT: [MessageHandler(Filters.text, check_product_amount)],
-            bot_states.READ_USER_INFO: [MessageHandler(Filters.text, read_user_info)],
+            bot_states.READ_USER_NAME: [MessageHandler(Filters.text, read_user_name)],
+            bot_states.READ_USER_ADDRESS: [MessageHandler(Filters.text, read_user_address)],
+            bot_states.READ_USER_PHONE: [MessageHandler(Filters.text, read_user_phone)],
             bot_states.CHECK_CLEAR: [CallbackQueryHandler(check_clear)],
             bot_states.CHECK_DELETE: [CallbackQueryHandler(check_delete)]
         },
