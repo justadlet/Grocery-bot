@@ -20,7 +20,7 @@ logging.basicConfig(format = '%(asctime)s - %(name)s - %(levelname)s - %(message
                      level = logging.INFO)
                      
 logger = logging.getLogger(__name__)
-LIST_OF_ADMINS = [251961384, 771840280]
+LIST_OF_ADMINS = [251961384, 771840280, 736492045]
 custom_keyboard = [['📋Меню'],
                    ['/start', 'ℹ️Помощь'],
                    ['✍🏻Отзыв']]
