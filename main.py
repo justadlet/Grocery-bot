@@ -340,16 +340,14 @@ def check_show_menu(update, context):
     return bot_states.CHECK_MENU
 
 def read_user_name(update, context):
-    user_name = update.message.text
-    context.user_data['Name'] = user_name
+    context.user_data['Name'] = update.message.text
     user_id = update.effective_user.id
     send_message(context, user_id, "Спасибо, теперь для доставки продуктов мне нужен ваш адрес 📍")
     return bot_states.READ_USER_ADDRESS
 
 def read_user_address(update, context):
-    user_address = update.message.text
-    context.user_data['Address'] = user_address
-    user_id = update.effective_user_id
+    context.user_data['Address'] = update.message.text
+    user_id = update.effective_user.id
     send_message(context, user_id, "Прекрасно, осталось ввести ваш номер телефона 📱 и я отправлю ваш заказ администраторам.")
     return bot_states.READ_USER_PHONE
 
