@@ -352,10 +352,15 @@ def read_user_address(update, context):
     return bot_states.READ_USER_PHONE
 
 def read_user_phone(update, context):
-    user_phone = update.message.text
+    user_id = update.effective_user.id
+    user_phone = 0
+    try:
+        user_phone = int(update.message.text)
+    except:
+        send_message(context, user_id, "Введите пожалуйста ваш номер телефона 📱")
+        return bot_states.READ_USER_PHONE
     user_name = context.user_data['Name']
     user_address = context.user_data['Address']
-    user_id = update.effective_user.id
     username = update.message.from_user.username
     text =  "❗️Новый заказ от клиента❗️\n\nФИО 👩🏽‍💼👨🏽‍💼: " + str(user_name) + "\nАдрес 📍: " + str(user_address) + "\nНомер телефона 📱: " + str(user_phone) + "\nUsername: @" + str(username) + "\nUser ID: " + str(user_id) + "\n\nЗаказ клиента 🧺: \n" + get_product_list(user_id)
     for admin_id in LIST_OF_ADMINS:
