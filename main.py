@@ -357,7 +357,7 @@ def read_user_phone(update, context):
     user_address = context.user_data['Address']
     user_id = update.effective_user.id
     username = update.message.from_user.username
-    text =  "❗️Новый заказ от клиента❗️\n\nФИО: " + str(user_name) + "\nАдрес: " + str(user_address) + "\nНомер телефона: " + str(user_phone) + "\nUsername: @" + str(username) + "\nUser ID: " + str(user_id) + "\n\nЗаказ клиента: \n" + get_product_list(user_id)
+    text =  "❗️Новый заказ от клиента❗️\n\nФИО 👩🏽‍💼👨🏽‍💼: " + str(user_name) + "\nАдрес 📍: " + str(user_address) + "\nНомер телефона 📱: " + str(user_phone) + "\nUsername: @" + str(username) + "\nUser ID: " + str(user_id) + "\n\nЗаказ клиента 🧺: \n" + get_product_list(user_id)
     for admin_id in LIST_OF_ADMINS:
         send_message(context, admin_id, text)
     sql_clear(user_id)
