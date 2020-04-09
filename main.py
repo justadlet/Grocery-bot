@@ -22,7 +22,7 @@ logging.basicConfig(format = '%(asctime)s - %(name)s - %(levelname)s - %(message
 logger = logging.getLogger(__name__)
 LIST_OF_ADMINS = [251961384, 771840280]
 custom_keyboard = [['📋Меню'],
-                   ['/start', 'ℹ️Помощь'],
+                   ['ℹ️Помощь'],
                    ['✍🏻Отзыв']]
 
 reply_markup = telegram.ReplyKeyboardMarkup(custom_keyboard, resize_keyboard = True)
