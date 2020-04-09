@@ -20,7 +20,7 @@ logging.basicConfig(format = '%(asctime)s - %(name)s - %(levelname)s - %(message
                      level = logging.INFO)
                      
 logger = logging.getLogger(__name__)
-LIST_OF_ADMINS = [251961384, 771840280, 736492045]
+LIST_OF_ADMINS = [251961384, 771840280]
 custom_keyboard = [['📋Меню'],
                    ['/start', 'ℹ️Помощь'],
                    ['✍🏻Отзыв']]
@@ -111,8 +111,8 @@ def get_base_inline_keyboard():
             InlineKeyboardButton('Фрукты 🍏', callback_data = 'fruits'),
         ],
         [
-            InlineKeyboardButton('Продукты', callback_data = 'meals'),
-            InlineKeyboardButton('Напитки', callback_data = 'derinks'),
+            InlineKeyboardButton('Горячая еда 🍽', callback_data = 'meals'),
+            InlineKeyboardButton('Напитки ☕️🥤', callback_data = 'derinks'),
         ],
         [
             InlineKeyboardButton("Отправить заказ администратору 🛎", callback_data = "order")
