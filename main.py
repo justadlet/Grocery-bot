@@ -112,7 +112,7 @@ def get_base_inline_keyboard():
         ],
         [
             InlineKeyboardButton('Горячая еда 🍽', callback_data = 'meals'),
-            InlineKeyboardButton('Напитки ☕️🥤', callback_data = 'derinks'),
+            InlineKeyboardButton('Напитки 🥤', callback_data = 'derinks'),
         ],
         [
             InlineKeyboardButton("Отправить заказ администратору 🛎", callback_data = "order")
