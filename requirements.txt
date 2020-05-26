@@ -3,5 +3,5 @@ pyTelegramBotAPI
 emoji
 sqlalchemy
 requests
-psycopg2
+psycopg2-binary
 gunicorn
