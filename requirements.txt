@@ -4,3 +4,4 @@ emoji
 sqlalchemy
 requests
 psycopg2
+gunicorn
