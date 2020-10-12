@@ -104,8 +104,6 @@ def send_message_keyboard(context, chat_id, text, keyboard):
 
 def get_base_inline_keyboard():
     keyboard = [
-        # Каждый элемент внутри списка -- это один вертикальный столбец.
-        # Сколько кнопок -- столько столбцов
         [
             InlineKeyboardButton('Овощи 🥦', callback_data = 'vegetables'),
             InlineKeyboardButton('Фрукты 🍏', callback_data = 'fruits'),
