@@ -11,7 +11,7 @@ start_command_response = "Здравствуйте 👋🏼! С помощью �
 "\n" \
 "#UideBol"
 
-added_to_bucket = "Added to bucket, thanks"
+added_to_bucket = "Added to bucket, thanks!"
 
 ask_amount_of_products = "Хорошо, введите сколько кг/шт данного продукта вам нужно: "
 
