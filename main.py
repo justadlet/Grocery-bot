@@ -279,7 +279,7 @@ def check_show_menu(update, context):
         user_products = sql_number_of_products(user_id)
         if user_products == 0:
             query.edit_message_text(
-                text = "❗️Перед тем как отправить ваш заказ, пополните пожалуйста вашу корзину.\n\n" + str(get_menu_text(user_id)),
+                text = "❗️Перед тем как отправить ваш заказ, пополните пожалуйста вашу корзину🧺.\n\n" + str(get_menu_text(user_id)),
                 reply_markup = get_base_inline_keyboard()
             )
             return bot_states.CHECK_MENU
