@@ -346,7 +346,7 @@ def read_user_name(update, context):
 def read_user_address(update, context):
     context.user_data['Address'] = update.message.text
     user_id = update.effective_user.id
-    send_message(context, user_id, "Прекрасно, осталось ввести ваш номер телефона 📱 и я отправлю ваш заказ администраторам.")
+    send_message(context, user_id, "Прекрасно, осталось только ввести ваш номер телефона 📱 и я отправлю ваш заказ администраторам.")
     return bot_states.READ_USER_PHONE
 
 def read_user_phone(update, context):
